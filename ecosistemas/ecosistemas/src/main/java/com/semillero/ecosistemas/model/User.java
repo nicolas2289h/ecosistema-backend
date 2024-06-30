@@ -11,17 +11,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name="usuarios")
-public class Usuario {
+@Table(name="users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombre;
-    private String apellido;
+    private String name;
+    private String lastname;
     private String email;
-    // private String password; --> SE MANEJADA DESDE 02AUTH
+    // private String password; --> Handled with 02AUTH
     @Column(nullable = false, columnDefinition = "TINYINT", length = 1)
     private Boolean deleted;
     private String rol;
-    private String telefono;
+    private String telephone_number;
 }
