@@ -35,4 +35,9 @@ public class GlobalHandlerExceptions {
     public ResponseEntity<String> handlerConstraintViolationException(ConstraintViolationException e) {
         return new ResponseEntity<>("Debe adjuntar por lo menos un archivo.", HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

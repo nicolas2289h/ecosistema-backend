@@ -23,13 +23,13 @@ public class ProductController {
         return ResponseEntity.ok(newProduct);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/findid/{id}")
     public ResponseEntity<Product> findProductById(@PathVariable Long id){
         Product product = productService.findProductById(id);
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/findname/{name}")
     public ResponseEntity<List<Product>> findProductByName(@PathVariable String name){
         List<Product>products = productService.findProductByName(name);
         return ResponseEntity.ok(products);
@@ -46,4 +46,20 @@ public class ProductController {
         Product editProduct = productService.editProduct(id, product);
         return ResponseEntity.ok(editProduct);
     }
+
+
+    @PatchMapping("/changestatus/{id}")
+    public ResponseEntity<Product> changeStatus(@PathVariable Long id, @RequestBody String status) {
+        Product changeStatus = productService.changeStatus(id, status);
+        return ResponseEntity.ok(changeStatus);
+    }
+
+
+    @PatchMapping("/sendfeedback/{id}")
+    public ResponseEntity<Product> sendFeedback(@PathVariable Long id, @RequestBody String feedback){
+        Product sendFeedback = productService.sendFeedback(id, feedback);
+        return ResponseEntity.ok(sendFeedback);
+    }
+
+
 }

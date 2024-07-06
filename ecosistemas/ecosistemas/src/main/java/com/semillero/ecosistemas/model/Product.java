@@ -27,9 +27,10 @@ public class Product {
     private String phoneNumber;
     private String facebook;
     private String instagram;
-    private Country country;
-    private Province province;
+    //private Country country;
+    //private Province province;
     private String city;
+
     @ElementCollection
     @NotEmpty(message = "Must have at least 1 image.")
     @Size(max = 3)
@@ -38,6 +39,9 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(name="status")
     private Status status;
+
+    private Boolean deleted;
+    private String feedback;
 
 //    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @JoinColumn(name = "supplier_id", referencedColumnName = "id")

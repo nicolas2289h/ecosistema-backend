@@ -15,4 +15,8 @@ public interface IProductService {
     public List<Product> getAllProducts();
 
     public Product editProduct(Long id, Product product);
+
+    public Product changeStatus(Long id, String status);
+
+    public Product sendFeedback(Long id, String feedback);
 }
