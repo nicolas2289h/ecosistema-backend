@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +38,7 @@ public class Publication {
     private LocalDateTime creationDate = LocalDateTime.now();
 
     @ElementCollection
-    @NotEmpty(message = "Debe adjuntar por lo menos un archivo.")
-    @Size(max = 3)
+    @Size(message = "No se pueden adjuntar más de 3 archivos.", max = 3)
     private List<String> imagesURLs;
 
 //    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

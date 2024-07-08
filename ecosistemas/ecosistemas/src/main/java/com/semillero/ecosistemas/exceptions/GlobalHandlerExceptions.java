@@ -33,6 +33,6 @@ public class GlobalHandlerExceptions {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handlerConstraintViolationException(ConstraintViolationException e) {
-        return new ResponseEntity<>("Debe adjuntar por lo menos un archivo.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("El rango para la cantidad de imagenes es de 1 a 3.", HttpStatus.BAD_REQUEST);
     }
 }

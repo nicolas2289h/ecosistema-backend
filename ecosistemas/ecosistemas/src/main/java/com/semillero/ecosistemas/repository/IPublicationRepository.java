@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface IPublicationRepository extends JpaRepository<Publication, Long> {
     List<Publication> findByDeletedFalse();
+    Publication findByImagesURLs(String imageUrl);
+
 }
