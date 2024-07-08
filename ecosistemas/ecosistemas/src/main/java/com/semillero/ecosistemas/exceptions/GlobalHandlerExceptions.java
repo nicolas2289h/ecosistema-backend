@@ -35,4 +35,9 @@ public class GlobalHandlerExceptions {
     public ResponseEntity<String> handlerConstraintViolationException(ConstraintViolationException e) {
         return new ResponseEntity<>("El rango para la cantidad de imagenes es de 1 a 3.", HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
