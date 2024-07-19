@@ -29,8 +29,8 @@ public class UserService implements IUserService {
             foundUser.setLastname(lastName);
             foundUser.setEmail(email);
             foundUser.setPicture(picture);
-
             return usuarioRepo.save(foundUser);
+            // VER ROLES AL GUARDAR USER
         }
 
         User user = new User();
@@ -39,12 +39,12 @@ public class UserService implements IUserService {
         user.setEmail(email);
         user.setDeleted(false);
         user.setPicture(picture);
-
+        // VER ROLES AL GUARDAR USER
         return usuarioRepo.save(user);
     }
 
-    public String generateJwtToken(OAuth2User oAuth2User) {
-        return jwtConfig.generateToken(oAuth2User);
+    public String generateJwtToken(User user) {
+        return jwtConfig.generateToken(user);
     }
 
     @Override

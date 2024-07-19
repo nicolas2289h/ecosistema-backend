@@ -16,5 +16,5 @@ public interface IUserService {
     //Update (Change State --> deleted)
     public void switchState(User user);
 
-    String generateJwtToken(OAuth2User oAuth2User);
+    String generateJwtToken(User user);
 }

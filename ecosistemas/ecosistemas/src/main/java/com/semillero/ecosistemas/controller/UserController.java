@@ -30,15 +30,15 @@ public class UserController {
     @GetMapping("/protegido")
     public String protegido(@AuthenticationPrincipal OAuth2User oAuth2User) {
         User newUser = userService.saveGoogleUser(oAuth2User);
-        String token = userService.generateJwtToken(oAuth2User);
+        String token = userService.generateJwtToken(newUser);
         return "ACCESO A PAGINA PROTEGIDA.";
     }
 
     @GetMapping("/login")
     public ResponseEntity<?> saveGoogleUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
         User newUser = userService.saveGoogleUser(oAuth2User);
-        String token = userService.generateJwtToken(oAuth2User);
-        return ResponseEntity.ok(new AuthResponse(newUser, token));
+        String token = userService.generateJwtToken(newUser);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
     @GetMapping("/logout")

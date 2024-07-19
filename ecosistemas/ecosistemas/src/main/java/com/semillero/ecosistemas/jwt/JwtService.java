@@ -1,5 +1,6 @@
     package com.semillero.ecosistemas.jwt;
 
+    import com.semillero.ecosistemas.model.User;
     import io.jsonwebtoken.Claims;
     import io.jsonwebtoken.Jwts;
     import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,17 +21,22 @@
         @Value("${jwt.expiration.ms}")
         private long expirationMs;
 
-        public String generateToken(OAuth2User oAuth2User) {
+        public String generateToken(User user) {
             Date now = new Date();
             Date expirationDate = new Date(now.getTime() + expirationMs);
-//            Map<String, Object> claims = new HashMap<>();
-//            claims.put("name", oAuth2User.getAttribute("given_name"));
-//            claims.put("lastName", oAuth2User.getAttribute("family_name"));
-//            claims.put("email", oAuth2User.getAttribute("email"));
-//            claims.put("picture", oAuth2User.getAttribute("picture"));
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", user.getId());
+            claims.put("name", user.getName());
+            claims.put("lastName", user.getLastname());
+            claims.put("email", user.getEmail());
+            claims.put("picture", user.getPicture());
+            claims.put("deleted", user.getDeleted());
+            claims.put("telephone_number", user.getTelephone_number());
+            claims.put("rol", user.getRol());
+
             return Jwts.builder()
-//                    .setClaims(claims)
-                    .setSubject(oAuth2User.getAttribute("email"))
+                    .setClaims(claims)
+                    .setSubject(user.getEmail())
                     .setIssuedAt(now)
                     .setExpiration(expirationDate)
                     .signWith(SignatureAlgorithm.HS512, secret)

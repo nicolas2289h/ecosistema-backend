@@ -22,7 +22,7 @@ public class User {
     // private String password; --> Handled with 02AUTH
     @Column(nullable = false, columnDefinition = "TINYINT", length = 1)
     private Boolean deleted = false;
-    private String rol;
+    private String rol = "PROVEEDOR"; // MODIFICAR
     private String telephone_number;
     private String picture;
 }
