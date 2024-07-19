@@ -22,4 +22,8 @@ public class Province {
     @JsonBackReference
     private Country country;
 
+    public Province(String name, Country country) {
+        this.name = name;
+        this.country = country;
+    }
 }
