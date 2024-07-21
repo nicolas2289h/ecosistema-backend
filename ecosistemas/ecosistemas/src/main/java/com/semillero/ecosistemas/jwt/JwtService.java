@@ -29,7 +29,7 @@
             claims.put("name", user.getName());
             claims.put("lastName", user.getLastname());
             claims.put("email", user.getEmail());
-            claims.put("picture", user.getPicture());
+//            claims.put("picture", user.getPicture());
             claims.put("deleted", user.getDeleted());
             claims.put("telephone_number", user.getTelephone_number());
             claims.put("rol", user.getRol());
