@@ -16,13 +16,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/users/login", "/api/users/protegido").authenticated()
+                                .requestMatchers("/api/auth/login").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .oauth2Login(withDefaults())
                 .logout(logout ->
                         logout
-//                                .logoutSuccessUrl("/api/users/inicio")
                                 .invalidateHttpSession(true)
                                 .clearAuthentication(true)
                 );
