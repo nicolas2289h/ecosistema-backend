@@ -27,11 +27,11 @@
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", user.getId());
             claims.put("name", user.getName());
-            claims.put("lastName", user.getLastname());
+            claims.put("lastName", user.getLastName());
             claims.put("email", user.getEmail());
-//            claims.put("picture", user.getPicture());
+            claims.put("picture", user.getPicture());
             claims.put("deleted", user.getDeleted());
-            claims.put("telephone_number", user.getTelephone_number());
+            claims.put("telephone_number", user.getTelephoneNumber());
             claims.put("rol", user.getRol());
 
             return Jwts.builder()
