@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -14,14 +15,25 @@ import lombok.Setter;
 @Table(name="users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String lastname;
+    private String lastName;
     private String email;
-    // private String password; --> Handled with 02AUTH
+    private String picture;
+    private String telephoneNumber;
+
     @Column(nullable = false, columnDefinition = "TINYINT", length = 1)
     private Boolean deleted;
+
     private String rol;
-    private String telephone_number;
+    @PrePersist
+    public void prePersist() {
+        if (deleted == null) {
+            deleted = false;
+        }
+        if (rol == null) {
+            rol = "USER";
+        }
+    }
 }
