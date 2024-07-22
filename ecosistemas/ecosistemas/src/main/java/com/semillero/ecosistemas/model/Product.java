@@ -1,13 +1,17 @@
 package com.semillero.ecosistemas.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -20,21 +24,44 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El campo nombre es obligatorio.")
     private String name;
-    private String description;
-    //private Category category;
+
+    @NotBlank(message = "El campo descripción breve es obligatorio.")
+    @Length(max = 50, message = "La cantidad máxima de caracteres es 50.")
+    private String shortDescription;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Category category;
+
+    @NotBlank(message = "El campo correo electronico es obligatorio.")
     private String email;
+
+    @NotBlank(message = "El campo telefono/whatsapp es obligatorio.")
     private String phoneNumber;
-    private String facebook;
+
     private String instagram;
-    //private Country country;
-    //private Province province;
+    private String facebook;
+
+    @ManyToOne
+    @JoinColumn(name = "country_id", referencedColumnName = "id")
+    private Country country;
+
+    @ManyToOne
+    @JoinColumn(name = "province_id", referencedColumnName = "id")
+    private Province province;
+
     private String city;
 
+    @NotBlank(message = "El campo descripción completa es obligatorio.")
+    @Length(max = 300, message = "La cantidad máxima de caracteres es 300.")
+    private String longDescription;
+
     @ElementCollection
-    @NotEmpty(message = "Must have at least 1 image.")
+    @NotEmpty(message = "Debe contener al menos 1 imagen con un maximo de 3.")
     @Size(max = 3)
-    private List<String> imagesURLs;
+    private Set<String> imagesURLs;
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
@@ -43,8 +70,18 @@ public class Product {
     private Boolean deleted;
     private String feedback;
 
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-//    private Supplier supplier_id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Supplier supplier_id;
 
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = Status.REVISION_INICIAL;
+        }
+        if (deleted == null) {
+            deleted = false;
+        }
+    }
 }

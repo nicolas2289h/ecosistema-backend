@@ -1,5 +1,4 @@
 package com.semillero.ecosistemas.model;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +26,7 @@ public class User {
     private Boolean deleted;
 
     private String rol;
+
     @PrePersist
     public void prePersist() {
         if (deleted == null) {

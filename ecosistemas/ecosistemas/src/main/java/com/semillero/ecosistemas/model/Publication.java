@@ -3,7 +3,6 @@ package com.semillero.ecosistemas.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,9 +40,9 @@ public class Publication {
     @Size(message = "No se pueden adjuntar más de 3 archivos.", max = 3)
     private List<String> imagesURLs;
 
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JoinColumn(name = "admin_id", referencedColumnName = "id")
-//    private Admin creatorUser;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    private Admin creatorUser;
 
     private Integer viewCount = 0;
 
