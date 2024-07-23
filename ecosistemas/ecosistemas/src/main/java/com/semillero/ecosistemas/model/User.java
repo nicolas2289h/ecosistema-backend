@@ -25,15 +25,15 @@ public class User {
     @Column(nullable = false, columnDefinition = "TINYINT", length = 1)
     private Boolean deleted;
 
-    private String rol;
+    private String role;
 
     @PrePersist
     public void prePersist() {
         if (deleted == null) {
             deleted = false;
         }
-        if (rol == null) {
-            rol = "USER";
+        if (role == null) {
+            role = "USER";
         }
     }
 }

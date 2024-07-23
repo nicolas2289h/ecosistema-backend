@@ -29,7 +29,7 @@ public class Supplier extends User{
     @Override
     public void prePersist() {
         super.prePersist();
-        setRol("SUPPLIER");
+        setRole("SUPPLIER");
         setDeleted(false);
         if (productList == null) {
             productList = new ArrayList<>();
