@@ -32,7 +32,7 @@
             claims.put("picture", user.getPicture());
             claims.put("deleted", user.getDeleted());
             claims.put("telephone_number", user.getTelephoneNumber());
-            claims.put("rol", user.getRol());
+            claims.put("role", user.getRole());
 
             return Jwts.builder()
                     .setClaims(claims)
