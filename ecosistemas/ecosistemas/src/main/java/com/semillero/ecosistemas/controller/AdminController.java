@@ -4,7 +4,6 @@ import com.semillero.ecosistemas.model.Admin;
 import com.semillero.ecosistemas.service.IAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admins")
-@PreAuthorize("denyAll()")
 public class AdminController {
     @Autowired
     IAdminService adminService;
