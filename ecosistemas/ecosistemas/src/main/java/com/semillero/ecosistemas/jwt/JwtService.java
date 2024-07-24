@@ -24,18 +24,18 @@ public class JwtService {
     @Value("${jwt.expiration.ms}")
     private long expirationMs;
 
-    public String generateToken(UserDetails userDetails) {
-        Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + expirationMs);
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", ((User) userDetails).getId());
-        claims.put("name", ((User) userDetails).getName());
-        claims.put("lastName", ((User) userDetails).getLastName());
-        claims.put("email", ((User) userDetails).getEmail());
-        claims.put("picture", ((User) userDetails).getPicture());
-        claims.put("deleted", ((User) userDetails).getDeleted());
-        claims.put("telephone_number", ((User) userDetails).getTelephoneNumber());
-        claims.put("role", ((User) userDetails).getRole().name());
+        public String generateToken(UserDetails userDetails) {
+            Date now = new Date();
+            Date expirationDate = new Date(now.getTime() + expirationMs);
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", ((User) userDetails).getId());
+            claims.put("name", ((User) userDetails).getName());
+            claims.put("lastName", ((User) userDetails).getLastName());
+            claims.put("email", ((User) userDetails).getEmail());
+            claims.put("picture", ((User) userDetails).getPicture());
+            claims.put("deleted", ((User) userDetails).getDeleted());
+            claims.put("telephone_number", ((User) userDetails).getTelephoneNumber());
+            claims.put("role", ((User) userDetails).getRole().name());
 
         return Jwts.builder()
                 .setClaims(claims)
