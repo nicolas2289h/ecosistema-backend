@@ -1,61 +1,73 @@
-    package com.semillero.ecosistemas.jwt;
+package com.semillero.ecosistemas.jwt;
 
-    import com.semillero.ecosistemas.model.User;
-    import io.jsonwebtoken.Claims;
-    import io.jsonwebtoken.Jwts;
-    import io.jsonwebtoken.SignatureAlgorithm;
-    import org.springframework.beans.factory.annotation.Value;
-    import org.springframework.context.annotation.Configuration;
-    import org.springframework.security.oauth2.core.user.OAuth2User;
+import com.semillero.ecosistemas.model.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.UserDetails;
 
-    import java.util.Date;
-    import java.util.HashMap;
-    import java.util.Map;
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-    @Configuration
-    public class JwtService {
+@Configuration
+public class JwtService {
 
-        @Value("${jwt.secret}")
-        private String secret;
+    @Value("${jwt.secret}")
+    private String secret;
 
-        @Value("${jwt.expiration.ms}")
-        private long expirationMs;
+    @Value("${jwt.expiration.ms}")
+    private long expirationMs;
 
-        public String generateToken(User user) {
-            Date now = new Date();
-            Date expirationDate = new Date(now.getTime() + expirationMs);
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("id", user.getId());
-            claims.put("name", user.getName());
-            claims.put("lastName", user.getLastName());
-            claims.put("email", user.getEmail());
-            claims.put("picture", user.getPicture());
-            claims.put("deleted", user.getDeleted());
-            claims.put("telephone_number", user.getTelephoneNumber());
-            claims.put("role", user.getRole());
+    public String generateToken(UserDetails userDetails) {
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + expirationMs);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", ((User) userDetails).getId());
+        claims.put("name", ((User) userDetails).getName());
+        claims.put("lastName", ((User) userDetails).getLastName());
+        claims.put("email", ((User) userDetails).getEmail());
+        claims.put("picture", ((User) userDetails).getPicture());
+        claims.put("deleted", ((User) userDetails).getDeleted());
+        claims.put("telephone_number", ((User) userDetails).getTelephoneNumber());
+        claims.put("role", ((User) userDetails).getRole().name());
 
-            return Jwts.builder()
-                    .setClaims(claims)
-                    .setSubject(user.getEmail())
-                    .setIssuedAt(now)
-                    .setExpiration(expirationDate)
-                    .signWith(SignatureAlgorithm.HS512, secret)
-                    .compact();
-        }
-
-        public Claims extractClaims(String token) {
-            return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        }
-
-        public String extractEmail(String token) {
-            return extractClaims(token).getSubject();
-        }
-
-        public boolean isTokenExpired(String token) {
-            Date expiration = extractClaims(token).getExpiration();
-            return expiration.before(new Date());
-        }
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .signWith(getSignKey(), SignatureAlgorithm.HS512)
+                .compact();
     }
+
+    private Key getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public Claims extractClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String extractUsername(String token) { return extractClaims(token).getSubject(); }
+
+    private boolean isTokenExpired(String token) {
+        return extractClaims(token).getExpiration().before(new Date());
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+}
