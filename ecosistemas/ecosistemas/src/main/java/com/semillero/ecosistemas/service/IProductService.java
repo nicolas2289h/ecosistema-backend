@@ -1,25 +1,32 @@
 package com.semillero.ecosistemas.service;
 
+import com.semillero.ecosistemas.dto.ProductDTO;
 import com.semillero.ecosistemas.model.Product;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
 
-    //Create
-    public Product saveProduct(Product product);
+    // Create
+    Product saveProduct(ProductDTO productDTO, List<MultipartFile> files) throws IOException;
+    Product saveProduct(Product product);
 
-    //Find
-    public Optional<Product> findProductById(Long id);
-    public List<Product> findProductByName(String name);
+    // Find
+    Optional<Product> findProductById(Long id);
+    List<Product> findProductByName(String name);
 
-    //Read
-    public List<Product> getAllProducts();
+    // Read
+    List<Product> getAllProducts();
 
-    //Update
-    public void switchState(Product product);
-    public Product editProduct(Long id, Product product);
-    public Product changeStatus(Long id, String status);
-    public Product sendFeedback(Long id, String feedback);
+    // Update
+    Product editProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException;
+    void switchState(Product product);
+    Product changeStatus(Long id, String status);
+    Product sendFeedback(Long id, String feedback);
+
+    // Cloudinary
+    void deleteImageProduct(String url) throws IOException;
 }

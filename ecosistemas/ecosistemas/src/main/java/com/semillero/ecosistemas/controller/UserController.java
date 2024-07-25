@@ -4,6 +4,7 @@ import com.semillero.ecosistemas.model.User;
 import com.semillero.ecosistemas.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,17 +23,20 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<User> getAllUsers(){
         return userService.findAllUsers();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/find/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email){
         Optional<User> optionalUser = userService.findUserByEmail(email);
         return optionalUser.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/changestate/{id}")
     public ResponseEntity<User> switchUserState(@PathVariable Long id) {
         Optional<User> userOptional = userService.findUserById(id);
