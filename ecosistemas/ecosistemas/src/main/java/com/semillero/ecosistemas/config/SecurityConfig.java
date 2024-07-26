@@ -19,7 +19,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    private final CustomOAuth2AuthenticationSuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,18 +30,14 @@ public class SecurityConfig {
                                 .requestMatchers("/api/admins", "/api/admins/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .successHandler(successHandler)
-                )
+                .oauth2Login(withDefaults())
                 .logout(logout ->
                         logout
                                 .invalidateHttpSession(true)
                                 .clearAuthentication(true)
                 )
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(withDefaults()); // Configuración de CORS global
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
