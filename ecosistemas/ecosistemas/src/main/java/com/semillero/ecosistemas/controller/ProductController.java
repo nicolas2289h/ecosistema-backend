@@ -81,6 +81,7 @@ public class ProductController {
         }
     }
 
+
     //Find one Product by ID Endpoint (Just for Admins)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/find/{id}")
@@ -96,8 +97,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    //Get All Products Endpoint (Just for Admins)
-    @PreAuthorize("hasRole('ADMIN')")
+    //Get All Products Endpoint
     @GetMapping("/all")
     public ResponseEntity<List<Product>> getAllProducts(){
         List<Product>allProducts = productService.getAllProducts();

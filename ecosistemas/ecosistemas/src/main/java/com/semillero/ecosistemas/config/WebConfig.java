@@ -11,29 +11,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${cors.ip.address}")
-    private String ipAddress;
 
-    @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins(ipAddress)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
-
-    /*
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                .allowedOrigins("http://localhost:5173/","http://localhost:5174/")
+                .allowedOrigins("http://localhost:5173","http://localhost:5174")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .exposedHeaders("abc")
                 .maxAge(36L);
     }
 
-     */
 }

@@ -100,6 +100,8 @@ public class ProductService implements IProductService {
                 .supplier(supplier)
                 .build();
 
+        List<Product>addProduct = supplier.getProductList();
+        addProduct.add(product);
         return productRepository.save(product);
     }
 
