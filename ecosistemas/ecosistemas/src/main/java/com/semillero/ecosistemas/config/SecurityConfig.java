@@ -1,16 +1,23 @@
 package com.semillero.ecosistemas.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -18,7 +25,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/login").authenticated()
-                                .requestMatchers("/api/admins").hasRole("ADMIN")
+                                .requestMatchers("/api/admins").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/admins/**").hasRole("ADMIN")
+                                .requestMatchers("/api/publications/**").hasRole("ADMIN")
+                                .requestMatchers("/api/Suppliers").hasAnyRole("USER","SUPPLIER")
+                                .requestMatchers("/api/Suppliers/**").hasRole("SUPPLIER")
+                                .requestMatchers("/api/products/**").hasRole("SUPPLIER")
                                 .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -29,7 +41,9 @@ public class SecurityConfig {
                         logout
                                 .invalidateHttpSession(true)
                                 .clearAuthentication(true)
-                );
+                )
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
