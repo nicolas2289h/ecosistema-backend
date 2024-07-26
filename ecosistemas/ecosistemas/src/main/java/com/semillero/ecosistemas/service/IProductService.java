@@ -1,25 +1,42 @@
 package com.semillero.ecosistemas.service;
 
+import com.semillero.ecosistemas.dto.ProductDTO;
 import com.semillero.ecosistemas.model.Product;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
+        // Create
+        public ProductDTO buildProductDTO(String name,
+                                          String shortDescription,
+                                          Long categoryId,
+                                          String email,
+                                          String phoneNumber,
+                                          String instagram,
+                                          String facebook,
+                                          Long countryId,
+                                          Long provinceId,
+                                          String city,
+                                          String longDescription);
+        
+        public Product createProduct(ProductDTO productDTO, List<MultipartFile> files, String token) throws IOException;
 
-    //Create
-    public Product saveProduct(Product product);
+        // Find
+        public Optional<Product> findProductById(Long id);
+        public List<Product> findProductByName(String name);
 
-    //Find
-    public Optional<Product> findProductById(Long id);
-    public List<Product> findProductByName(String name);
+        // Read
+        public List<Product> getAllProducts();
+        public List<Product> getProductsBySupplier(Long id);
+        public List<Product> getProductsByCategory(Long id);
 
-    //Read
-    public List<Product> getAllProducts();
+        // Update
+        public void setFeedStatus(Long id, String status, String feedback);
+        //public Product updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> files);
 
-    //Update
-    public void switchState(Product product);
-    public Product editProduct(Long id, Product product);
-    public Product changeStatus(Long id, String status);
-    public Product sendFeedback(Long id, String feedback);
-}
+        // Delete
+        public void deleteProduct(Long id) throws IOException;
+    }

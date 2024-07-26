@@ -5,19 +5,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name="products")
 public class Product {
     @Id
@@ -61,7 +59,7 @@ public class Product {
     @ElementCollection
     @NotEmpty(message = "Debe contener al menos 1 imagen con un maximo de 3.")
     @Size(max = 3)
-    private Set<String> imagesURLs;
+    private List<String> imagesURLs;
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
@@ -71,9 +69,9 @@ public class Product {
     private String feedback;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
+    @JoinColumn(name = "supplier_id")
     @JsonBackReference
-    private Supplier supplier_id;
+    private Supplier supplier;
 
     @PrePersist
     public void prePersist() {

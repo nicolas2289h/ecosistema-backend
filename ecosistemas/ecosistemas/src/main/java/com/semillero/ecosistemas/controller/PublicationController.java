@@ -6,6 +6,7 @@ import com.semillero.ecosistemas.service.PublicationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class PublicationController {
     }
 
     // CREAR UNA NUEVA PUBLICACION
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Publication> createPublication(@Valid @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files) {
         try {
@@ -37,6 +39,7 @@ public class PublicationController {
     }
 
     // ACTUALIZAR UNA PUBLICACION POR ID
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Publication> updatePublication(@Valid @PathVariable Long id, @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files) {
         try {
@@ -50,7 +53,8 @@ public class PublicationController {
     }
 
     // OBTENER LAS PUBLICACIONES ACTIVAS Y NO ACTIVAS
-    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getall")
     public ResponseEntity<List<Publication>> getAllPublications() {
         try {
             List<Publication> listPublications = publicationService.getAllPublications();
@@ -61,6 +65,7 @@ public class PublicationController {
     }
 
     // OBTENER UNA PUBLICACION POR ID (ADMIN) SIN INCREMENTAR LAS VIEWS
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Publication> getPublicationById(@PathVariable @Valid Long id) {
         try {
@@ -71,7 +76,7 @@ public class PublicationController {
     }
 
     // OBTENER LAS PUBLICACIONES ACTIVAS
-    @GetMapping("/active")
+    @GetMapping
     public ResponseEntity<List<Publication>> getAllActivePublications() {
         try {
             List<Publication> listActivePublications = publicationService.getAllActivePublications();
@@ -82,6 +87,7 @@ public class PublicationController {
     }
 
     // INCREMENTAR EN UNO LAS VISUALIZACIONES DE UNA PUBLICACION
+    @PreAuthorize("hasAnyRole('SUPPLIER', 'USER')")
     @GetMapping("/view/{id}")
     public ResponseEntity<Publication> incrementViewPublication(@PathVariable Long id) {
         try {
@@ -92,6 +98,7 @@ public class PublicationController {
     }
 
     // CAMBIAR EL ESTADO DE UNA PUBLICACACION A 'DELETED' (OCULTO)
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/delete/{id}")
     public ResponseEntity<Publication> markAsDeleted(@PathVariable Long id) {
         try {
