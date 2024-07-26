@@ -21,8 +21,11 @@ public class SecurityConfig {
                                 .requestMatchers("/api/admins").hasRole("ADMIN")
                                 .anyRequest().permitAll()
                 )
-                .oauth2Login(withDefaults())
-                .logout(logout ->
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("http://localhost:5173");
+                        })
+                ).logout(logout ->
                         logout
                                 .invalidateHttpSession(true)
                                 .clearAuthentication(true)
