@@ -90,7 +90,6 @@ public class ProductController {
     }
 
     //Searchbar Endpoint
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
     @GetMapping("/search/{name}")
     public ResponseEntity<List<Product>> findProductByName(@PathVariable String name){
         List<Product> products = productService.findProductByName(name);
@@ -114,7 +113,6 @@ public class ProductController {
     }
 
     //Get Products grouped by Category (All Users)
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
     @GetMapping("/category/{categoryID}")
     public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryID){
         List<Product>productsByCategory = productService.getProductsByCategory(categoryID);
@@ -149,13 +147,6 @@ public class ProductController {
     public ResponseEntity<Product> changeStatus(@PathVariable Long id, @RequestBody String status) {
         Product changeStatus = productService.changeStatus(id, status);
         return ResponseEntity.ok(changeStatus);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/sendfeedback/{id}")
-    public ResponseEntity<Product> sendFeedback(@PathVariable Long id, @RequestBody String feedback){
-        Product sendFeedback = productService.sendFeedback(id, feedback);
-        return ResponseEntity.ok(sendFeedback);
     }
 
      */

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,15 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<User> getAllUsers(){
-        return userService.findAllUsers();
+        List<User> allUsers = userService.findAllUsers();
+        List<User> requestUsers = new ArrayList<>();
+        for(User user : allUsers){
+            if(user.getRole().toString().equals("USER")){
+                requestUsers.add(user);
+            }
+        }
+
+        return requestUsers;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

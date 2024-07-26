@@ -16,6 +16,7 @@ public class CategoryController {
     ICategoryService categoryService;
 
     //Create
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Category> saveCategory(@RequestBody Category category){
         Category newCategory = categoryService.saveCategory(category);

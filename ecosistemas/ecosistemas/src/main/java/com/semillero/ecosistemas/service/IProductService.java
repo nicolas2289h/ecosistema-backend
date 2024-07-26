@@ -32,19 +32,11 @@ public interface IProductService {
         public List<Product> getAllProducts();
         public List<Product> getProductsBySupplier(Long id);
         public List<Product> getProductsByCategory(Long id);
-        
+
         // Update
-        public void setFeedStatus(Long id, String feedback, String status);
+        public void setFeedStatus(Long id, String status, String feedback);
+        //public Product updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> files);
+
+        // Delete
+        public void deleteProduct(Long id) throws IOException;
     }
-
-    /*
-    // Update
-    Product editProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException;
-    void switchState(Product product);
-
-
-    // Cloudinary
-    void deleteImageProduct(String url) throws IOException;
-
-     */
-

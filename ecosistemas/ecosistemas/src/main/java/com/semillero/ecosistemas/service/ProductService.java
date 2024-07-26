@@ -146,7 +146,7 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public void setFeedStatus(Long id, String feedback, String status) {
+    public void setFeedStatus(Long id, String status, String feedback) {
         Optional<Product> optionalProduct = this.findProductById(id);
 
         if (optionalProduct.isPresent()) {
@@ -164,6 +164,35 @@ public class ProductService implements IProductService {
         }
     }
 
+    /*
+    @Override
+    public Product updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException {
+        //Traer el producto original
+        Product previousProduct = productRepository.findById(id).orElse(null);
+
+        //Eliminar las imagenes que ya no son necesarias (Llegan del Front con el DTO)
+        if(productDTO.getUrlsToDelete()!=null){
+            for(String url:productDTO.getUrlsToDelete()){
+                this.deleteImageProduct(url);
+            }
+        }
+
+
+
+        return null;
+    }
+
+     */
+
+    @Override
+    public void deleteProduct(Long id) throws IOException {
+        Product product = productRepository.findById(id).orElse(null);
+        List<String>imagesToDelete = product.getImagesURLs();
+        for(String url:imagesToDelete){
+            this.deleteImageProduct(url);
+        }
+        productRepository.deleteById(id);
+    }
 
     //Aux Methods
     private String uploadImage(MultipartFile file) throws IOException {
@@ -171,49 +200,6 @@ public class ProductService implements IProductService {
         return uploadResult.get("url");
     }
 
-    private Long extractSupplierIdFromToken(String token) {
-        Claims claims = jwtService.extractClaims(token);
-        return claims.get("id", Long.class);
-    }
-}
-
-    /*
-    // Update
-    @Override
-    public Product editProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException {
-        Product foundProduct = productRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("No se encontró el producto con id: " + id));
-
-        if (productDTO.getUrlsToDelete() != null && !productDTO.getUrlsToDelete().isEmpty()) {
-            for (String url : productDTO.getUrlsToDelete()) {
-                deleteImageProduct(url);
-                foundProduct.getImagesURLs().remove(url);
-            }
-        }
-
-        foundProduct.setName(productDTO.getName());
-        foundProduct.setShortDescription(productDTO.getShortDescription());
-        foundProduct.setEmail(productDTO.getEmail());
-        foundProduct.setPhoneNumber(productDTO.getPhoneNumber());
-        foundProduct.setInstagram(productDTO.getInstagram());
-        foundProduct.setFacebook(productDTO.getFacebook());
-        foundProduct.setCity(productDTO.getCity());
-        foundProduct.setLongDescription(productDTO.getLongDescription());
-
-        if (files != null && !files.isEmpty()) {
-            Set<String> existingImageUrls = foundProduct.getImagesURLs();
-            Set<String> newImageUrls = new HashSet<>(existingImageUrls);
-            for (MultipartFile file : files) {
-                if (newImageUrls.size() >= 3) break;
-                uploadImageProduct(file, newImageUrls);
-            }
-            foundProduct.setImagesURLs(newImageUrls);
-        }
-
-        return productRepository.save(foundProduct);
-    }
-
-    @Override
     public void deleteImageProduct(String url) throws IOException {
         String publicId = extractPublicIdFromUrl(url);
         try {
@@ -229,4 +215,8 @@ public class ProductService implements IProductService {
         return url.substring(startIndex, endIndex);
     }
 
-     */
+    private Long extractSupplierIdFromToken(String token) {
+        Claims claims = jwtService.extractClaims(token);
+        return claims.get("id", Long.class);
+    }
+}

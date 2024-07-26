@@ -19,7 +19,6 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/api/publications")
 @Validated
-@PreAuthorize("denyAll()")
 public class PublicationController {
     private final PublicationService publicationService;
 
@@ -77,7 +76,6 @@ public class PublicationController {
     }
 
     // OBTENER LAS PUBLICACIONES ACTIVAS
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
     @GetMapping
     public ResponseEntity<List<Publication>> getAllActivePublications() {
         try {
