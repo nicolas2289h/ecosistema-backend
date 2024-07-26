@@ -25,11 +25,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/login").authenticated()
-                                .requestMatchers("/api/admins","/api/admins/**").hasRole("ADMIN")
+                                .requestMatchers("/api/admins","/api/admins/**").hasRole("USER")
                                 .requestMatchers("/api/publications/**").hasRole("ADMIN")
                                 .requestMatchers("/api/suppliers").hasAnyRole("USER","SUPPLIER")
                                 .requestMatchers("/api/suppliers/**").hasRole("SUPPLIER")
-                                .requestMatchers("/api/products/**").hasRole("SUPPLIER")
+                                .requestMatchers("/api/products", "/api/products/**").hasRole("SUPPLIER")
                                 .anyRequest().permitAll()
                 )
                 .oauth2Login(withDefaults())

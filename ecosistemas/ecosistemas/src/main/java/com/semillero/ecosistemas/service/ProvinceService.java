@@ -14,6 +14,11 @@ public class ProvinceService implements IProvinceService {
     private IProvinceRepository provinceRepository;
 
     @Override
+    public Province getProvinceById(Long id) {
+        return provinceRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public List<Province> getProvincesByCountryId(Long countryId) {
         return provinceRepository.findByCountryId(countryId);
     }

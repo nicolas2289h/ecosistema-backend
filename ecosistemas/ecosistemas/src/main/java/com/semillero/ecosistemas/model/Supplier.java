@@ -1,10 +1,8 @@
 package com.semillero.ecosistemas.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +17,12 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name="suppliers")
-public class Supplier extends User{
-    @OneToMany(mappedBy = "supplier_id", cascade = CascadeType.ALL, orphanRemoval = true)
+public class Supplier extends User {
+
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
     @Size(max = 3)
     @JsonManagedReference
-    List<Product> productList;
+    private List<Product> productList = new ArrayList<>();
 
     @PrePersist
     @Override
@@ -31,8 +30,5 @@ public class Supplier extends User{
         super.prePersist();
         setRole(Role.SUPPLIER);
         setDeleted(false);
-        if (productList == null) {
-            productList = new ArrayList<>();
-        }
     }
 }

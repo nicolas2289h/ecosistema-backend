@@ -1,8 +1,11 @@
 package com.semillero.ecosistemas.dto;
 
+import com.semillero.ecosistemas.model.Category;
+import com.semillero.ecosistemas.model.Country;
+import com.semillero.ecosistemas.model.Province;
 import com.semillero.ecosistemas.model.Product;
 import jakarta.validation.constraints.NotBlank;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,14 +19,15 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ProductDTO {
-    private Long id;
 
     @NotBlank(message = "El campo nombre es obligatorio.")
     private String name;
 
     @NotBlank(message = "El campo descripción breve es obligatorio.")
-    @Length(max = 50, message = "La cantidad máxima de caracteres es 50.")
+    @Size(max = 50, message = "La cantidad máxima de caracteres es 50.")
     private String shortDescription;
+
+    private Category category;
 
     @NotBlank(message = "El campo correo electrónico es obligatorio.")
     private String email;
@@ -34,26 +38,29 @@ public class ProductDTO {
     private String instagram;
     private String facebook;
 
+    private Country country;
+    private Province province;
+
     private String city;
 
     @NotBlank(message = "El campo descripción completa es obligatorio.")
-    @Length(max = 300, message = "La cantidad máxima de caracteres es 300.")
+    @Size(max = 300, message = "La cantidad máxima de caracteres es 300.")
     private String longDescription;
 
-    // Se eliminan las validaciones de imágenes
-    private List<String> imagesURLs = new ArrayList<>();
-
-    private List<String> urlsToDelete;
+    // Lista para URLs de imágenes eliminadas
+    private List<String> urlsToDelete = new ArrayList<>();
 
     public static Product toEntity(ProductDTO productDto) {
         return Product.builder()
-                .id(productDto.getId())
                 .name(productDto.getName())
                 .shortDescription(productDto.getShortDescription())
+                .category(productDto.getCategory())
                 .email(productDto.getEmail())
                 .phoneNumber(productDto.getPhoneNumber())
                 .instagram(productDto.getInstagram())
                 .facebook(productDto.getFacebook())
+                .country(productDto.getCountry())
+                .province(productDto.getProvince())
                 .city(productDto.getCity())
                 .longDescription(productDto.getLongDescription())
                 .build();
@@ -61,16 +68,18 @@ public class ProductDTO {
 
     public static ProductDTO fromEntity(Product product) {
         return ProductDTO.builder()
-                .id(product.getId())
                 .name(product.getName())
                 .shortDescription(product.getShortDescription())
+                .category(product.getCategory())
                 .email(product.getEmail())
                 .phoneNumber(product.getPhoneNumber())
                 .instagram(product.getInstagram())
                 .facebook(product.getFacebook())
+                .country(product.getCountry())
+                .province(product.getProvince())
                 .city(product.getCity())
                 .longDescription(product.getLongDescription())
-                .imagesURLs(new ArrayList<>(product.getImagesURLs()))
+                .urlsToDelete(new ArrayList<>(product.getImagesURLs())) // Asumiendo que las URLs eliminadas pueden ser tratadas aquí
                 .build();
     }
 }

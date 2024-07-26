@@ -3,6 +3,9 @@ package com.semillero.ecosistemas.controller;
 import com.semillero.ecosistemas.dto.ProductDTO;
 import com.semillero.ecosistemas.model.Product;
 import com.semillero.ecosistemas.service.IProductService;
+import com.semillero.ecosistemas.service.ICategoryService;
+import com.semillero.ecosistemas.service.ICountryService;
+import com.semillero.ecosistemas.service.IProvinceService;
 import com.semillero.ecosistemas.service.ISupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,16 +15,76 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
-    @Autowired
-    IProductService productService;
 
     @Autowired
-    ISupplierService supplierService;
+    private IProductService productService;
+
+    @Autowired
+    private ISupplierService supplierService;
+
+    @Autowired
+    private ICategoryService categoryService;
+
+    @Autowired
+    private ICountryService countryService;
+
+    @Autowired
+    private IProvinceService provinceService;
+
+    @PreAuthorize("hasRole('SUPPLIER')")
+    @PostMapping
+    public ResponseEntity<Product> createProduct(
+            @RequestParam("name") String name,
+            @RequestParam("shortDescription") String shortDescription,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("email") String email,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("instagram") String instagram,
+            @RequestParam("facebook") String facebook,
+            @RequestParam("countryId") Long countryId,
+            @RequestParam("provinceId") Long provinceId,
+            @RequestParam("city") String city,
+            @RequestParam("longDescription") String longDescription,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestHeader("Authorization") String authorizationHeader) {
+
+        try {
+            // Extraer el token del header
+            String token = authorizationHeader.replace("Bearer ", "");
+
+            // Construir el ProductDTO
+            ProductDTO productDTO = productService.buildProductDTO(
+                    name,
+                    shortDescription,
+                    categoryId,
+                    email,
+                    phoneNumber,
+                    instagram,
+                    facebook,
+                    countryId,
+                    provinceId,
+                    city,
+                    longDescription
+            );
+
+            // Crear el producto usando el ProductDTO, archivos y token
+            Product product = productService.createProduct(productDTO, files, token);
+
+            return ResponseEntity.ok(product);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(null);
+        }
+    }
+}
+
+
+    /*
 
     @PreAuthorize("hasRole('SUPPLIER')")
     @PostMapping
@@ -91,4 +154,5 @@ public class ProductController {
         Product sendFeedback = productService.sendFeedback(id, feedback);
         return ResponseEntity.ok(sendFeedback);
     }
-}
+
+     */

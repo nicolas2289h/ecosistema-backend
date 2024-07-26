@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -59,7 +59,7 @@ public class Product {
     @ElementCollection
     @NotEmpty(message = "Debe contener al menos 1 imagen con un maximo de 3.")
     @Size(max = 3)
-    private Set<String> imagesURLs;
+    private List<String> imagesURLs;
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
@@ -69,9 +69,9 @@ public class Product {
     private String feedback;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
+    @JoinColumn(name = "supplier_id")
     @JsonBackReference
-    private Supplier supplier_id;
+    private Supplier supplier;
 
     @PrePersist
     public void prePersist() {

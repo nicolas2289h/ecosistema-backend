@@ -6,10 +6,25 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
-public interface IProductService {
+    public interface IProductService {
+        // Create
+        public ProductDTO buildProductDTO(String name,
+                                          String shortDescription,
+                                          Long categoryId,
+                                          String email,
+                                          String phoneNumber,
+                                          String instagram,
+                                          String facebook,
+                                          Long countryId,
+                                          Long provinceId,
+                                          String city,
+                                          String longDescription);
+        
+        public Product createProduct(ProductDTO productDTO, List<MultipartFile> files, String token) throws IOException;
+    }
 
+    /*
     // Create
     Product saveProduct(ProductDTO productDTO, List<MultipartFile> files) throws IOException;
     Product saveProduct(Product product);
@@ -29,4 +44,6 @@ public interface IProductService {
 
     // Cloudinary
     void deleteImageProduct(String url) throws IOException;
-}
+
+     */
+
