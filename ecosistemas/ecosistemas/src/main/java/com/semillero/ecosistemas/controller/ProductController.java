@@ -15,26 +15,25 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
+    //Dependency Injection
     @Autowired
     private IProductService productService;
-
     @Autowired
     private ISupplierService supplierService;
-
     @Autowired
     private ICategoryService categoryService;
-
     @Autowired
     private ICountryService countryService;
-
     @Autowired
     private IProvinceService provinceService;
 
+    //Create Endpoint (Just for Suppliers)
     @PreAuthorize("hasRole('SUPPLIER')")
     @PostMapping
     public ResponseEntity<Product> createProduct(
@@ -81,57 +80,61 @@ public class ProductController {
             return ResponseEntity.status(400).body(null);
         }
     }
-}
 
-
-    /*
-
-    @PreAuthorize("hasRole('SUPPLIER')")
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@ModelAttribute ProductDTO productDTO,
-                                                 @RequestParam("files") List<MultipartFile> files) throws IOException {
-        if (files == null || files.isEmpty() || files.size() > 3) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        Product product = productService.saveProduct(productDTO, files);
-        return ResponseEntity.ok(product);
-    }
-
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
-    @GetMapping("/findid/{id}")
+    //Find one Product by ID Endpoint (Just for Admins)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/find/{id}")
     public ResponseEntity<Product> findProductById(@PathVariable Long id){
         Optional<Product> optionalProduct = productService.findProductById(id);
         return optionalProduct.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    //Searchbar Endpoint
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
-    @GetMapping("/find/{name}")
+    @GetMapping("/search/{name}")
     public ResponseEntity<List<Product>> findProductByName(@PathVariable String name){
         List<Product> products = productService.findProductByName(name);
         return ResponseEntity.ok(products);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
-    @GetMapping
+    //Get All Products Endpoint (Just for Admins)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
     public ResponseEntity<List<Product>> getAllProducts(){
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+        List<Product>allProducts = productService.getAllProducts();
+        return ResponseEntity.ok(allProducts);
     }
 
+    //Get Products grouped by Supplier (Suppliers and Admins)
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER')")
-    @PutMapping("/changestate/{id}")
-    public ResponseEntity<Product> switchProductState(@PathVariable Long id) {
-        Optional<Product> productOptional = productService.findProductById(id);
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            productService.switchState(product);
-            return ResponseEntity.ok(productService.saveProduct(product));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{supplierID}")
+    public ResponseEntity<List<Product>> getProductsBySupplier(@PathVariable Long supplierID){
+        List<Product>productsBySupplier = productService.getProductsBySupplier(supplierID);
+        return ResponseEntity.ok(productsBySupplier);
     }
 
+    //Get Products grouped by Category (All Users)
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER', 'USER')")
+    @GetMapping("/category/{categoryID}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryID){
+        List<Product>productsByCategory = productService.getProductsByCategory(categoryID);
+        return ResponseEntity.ok(productsByCategory);
+    }
+
+    //Send Feedback and Set Status (Just For Admins)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/feedback/{productID}")
+    public ResponseEntity<String> sendFeedbackStatus(@PathVariable Long productID,
+                                                     @RequestParam String status,
+                                                     @RequestParam String feedback){
+        productService.setFeedStatus(productID, status, feedback);
+        return ResponseEntity.ok("Se ha actualizado el STATUS del producto y se ha enviado el feedback al Proveedor.");
+    }
+
+}
+
+
+    /*
     @PreAuthorize("hasRole('SUPPLIER')")
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id,

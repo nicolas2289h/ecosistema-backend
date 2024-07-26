@@ -103,55 +103,6 @@ public class ProductService implements IProductService {
         return productRepository.save(product);
     }
 
-    private String uploadImage(MultipartFile file) throws IOException {
-        Map<String, String> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return uploadResult.get("url");
-    }
-
-    private Long extractSupplierIdFromToken(String token) {
-        Claims claims = jwtService.extractClaims(token);
-        return claims.get("id", Long.class);
-    }
-}
-
-    /*
-
-    private final IProductRepository productRepository;
-    private final Cloudinary cloudinary;
-
-    @Autowired
-    public ProductService(IProductRepository productRepository, Cloudinary cloudinary) {
-        this.productRepository = productRepository;
-        this.cloudinary = cloudinary;
-
-    // Create
-    @Override
-    public Product saveProduct(ProductDTO productDTO, List<MultipartFile> files) throws IOException {
-        if (files == null || files.isEmpty() || files.stream().allMatch(MultipartFile::isEmpty)) {
-            throw new IllegalArgumentException("Debe adjuntar al menos un archivo.");
-        }
-        if (files.size() > 3) {
-            throw new IllegalArgumentException("No puede adjuntar más de 3 archivos.");
-        }
-
-        Set<String> imageUrls = new HashSet<>();
-        for (MultipartFile file : files) {
-            uploadImageProduct(file, imageUrls);
-        }
-
-        // No setear imagesURLs en el DTO, esto se maneja internamente en el servicio
-        productDTO.setImagesURLs(new ArrayList<>(imageUrls));
-        Product product = ProductDTO.toEntity(productDTO);
-        return productRepository.save(product);
-    }
-
-
-
-    // Save a Product entity directly
-    public Product saveProduct(Product product) {
-        return productRepository.save(product);
-    }
-
     // Find
     @Override
     public Optional<Product> findProductById(Long id) {
@@ -169,6 +120,64 @@ public class ProductService implements IProductService {
         return productRepository.findAll();
     }
 
+    @Override
+    public List<Product> getProductsBySupplier(Long id) {
+        Optional<Supplier> supplierOptional = supplierService.findSupplierById(id);
+        if(supplierOptional.isPresent()){
+            Supplier supplier = supplierOptional.get();
+            return supplier.getProductList();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(Long id) {
+        Category category = categoryService.findCategoryById(id);
+        List<Product> allProducts = this.getAllProducts();
+        List<Product> categoryProducts = new ArrayList<>();
+        for(Product product : allProducts){
+            if(product.getCategory().equals(category)){
+                categoryProducts.add(product);
+            }
+        }
+        return categoryProducts;
+    }
+
+
+
+    @Override
+    public void setFeedStatus(Long id, String feedback, String status) {
+        Optional<Product> optionalProduct = this.findProductById(id);
+
+        if (optionalProduct.isPresent()) {
+            Product toFeedbackProduct = optionalProduct.get();
+            try {
+                Status newStatus = Status.valueOf(status.toUpperCase());
+                toFeedbackProduct.setStatus(newStatus);
+                toFeedbackProduct.setFeedback(feedback);
+                productRepository.save(toFeedbackProduct);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("El status proporcionado no es válido: " + status);
+            }
+        } else {
+            throw new IllegalArgumentException("Producto no encontrado con el ID: " + id);
+        }
+    }
+
+
+    //Aux Methods
+    private String uploadImage(MultipartFile file) throws IOException {
+        Map<String, String> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+        return uploadResult.get("url");
+    }
+
+    private Long extractSupplierIdFromToken(String token) {
+        Claims claims = jwtService.extractClaims(token);
+        return claims.get("id", Long.class);
+    }
+}
+
+    /*
     // Update
     @Override
     public Product editProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException {
@@ -202,51 +211,6 @@ public class ProductService implements IProductService {
         }
 
         return productRepository.save(foundProduct);
-    }
-
-    @Override
-    public void switchState(Product product) {
-        product.setDeleted(!product.getDeleted());
-    }
-
-    @Override
-    public Product changeStatus(Long id, String status) {
-        Optional<Product> optionalProduct = this.findProductById(id);
-
-        if (optionalProduct.isPresent()) {
-            Product statusProduct = optionalProduct.get();
-            try {
-                Status newStatus = Status.valueOf(status.toUpperCase());
-                statusProduct.setStatus(newStatus);
-                return productRepository.save(statusProduct);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("El status proporcionado no es válido: " + status);
-            }
-        } else {
-            throw new IllegalArgumentException("Producto no encontrado con el ID: " + id);
-        }
-    }
-
-    @Override
-    public Product sendFeedback(Long id, String feedback) {
-        Optional<Product> optionalProduct = this.findProductById(id);
-
-        if (optionalProduct.isPresent()) {
-            Product feedbackProduct = optionalProduct.get();
-            feedbackProduct.setFeedback(feedback);
-            return productRepository.save(feedbackProduct);
-        } else {
-            throw new IllegalArgumentException("Producto no encontrado con el ID: " + id);
-        }
-    }
-
-    // Cloudinary
-    private void uploadImageProduct(MultipartFile file, Set<String> imagesUrls) throws IOException {
-        if (file != null && !file.isEmpty()) {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String newImageUrl = uploadResult.get("url").toString();
-            imagesUrls.add(newImageUrl);
-        }
     }
 
     @Override
