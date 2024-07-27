@@ -18,24 +18,20 @@ import java.util.*;
 public class ProductService implements IProductService {
     @Autowired
     private IProductRepository productRepository;
-
     @Autowired
     private ISupplierService supplierService;
+    @Autowired
+    private ICategoryService categoryService;
+    @Autowired
+    private ICountryService countryService;
+    @Autowired
+    private IProvinceService provinceService;
 
     @Autowired
     private Cloudinary cloudinary;
-
     @Autowired
     private JwtService jwtService;
 
-    @Autowired
-    private ICategoryService categoryService;
-
-    @Autowired
-    private ICountryService countryService;
-
-    @Autowired
-    private IProvinceService provinceService;
 
     // Método para construir el ProductDTO
     @Override
@@ -73,17 +69,22 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product createProduct(ProductDTO productDTO, List<MultipartFile> files, String token) throws IOException {
+    public Product createProduct(ProductDTO productDTO,
+                                 List<MultipartFile> files,
+                                 String token) throws IOException {
+        //Subimos los Archivos de imagen a CLOUDINARY y creamos el ARRAY de URLs
         List<String> productImages = new ArrayList<>();
         for (MultipartFile file : files) {
             String imageURL = uploadImage(file);
             productImages.add(imageURL);
         }
 
+        //Obtenemos el Usuario SUPPLIER que esta creando el producto a partir del TOKEN
         Long supplierId = extractSupplierIdFromToken(token);
         Supplier supplier = supplierService.findSupplierById(supplierId)
                 .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
 
+        //Creamos el Producto y completamos sus variables con los campos del ProductDTO, el Array de URLs y el Supplier
         Product product = Product.builder()
                 .name(productDTO.getName())
                 .shortDescription(productDTO.getShortDescription())
@@ -100,9 +101,15 @@ public class ProductService implements IProductService {
                 .supplier(supplier)
                 .build();
 
+        //Guardamos el Producto En Base de Datos
+        productRepository.save(product);
+
+        //Agregamos el producto a la lista de productos del Supplier
         List<Product>addProduct = supplier.getProductList();
         addProduct.add(product);
-        return productRepository.save(product);
+
+        //Retornamos el Producto para la Response
+        return product;
     }
 
     // Find
@@ -145,8 +152,6 @@ public class ProductService implements IProductService {
         return categoryProducts;
     }
 
-
-
     @Override
     public void setFeedStatus(Long id, String status, String feedback) {
         Optional<Product> optionalProduct = this.findProductById(id);
@@ -166,34 +171,54 @@ public class ProductService implements IProductService {
         }
     }
 
-    /*
+
     @Override
     public Product updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException {
         //Traer el producto original
         Product previousProduct = productRepository.findById(id).orElse(null);
 
-        //Eliminar las imagenes que ya no son necesarias (Llegan del Front con el DTO)
-        if(productDTO.getUrlsToDelete()!=null){
-            for(String url:productDTO.getUrlsToDelete()){
-                this.deleteImageProduct(url);
-            }
-        }
-
-
-
-        return null;
-    }
-
-     */
-
-    @Override
-    public void deleteProduct(Long id) throws IOException {
-        Product product = productRepository.findById(id).orElse(null);
-        List<String>imagesToDelete = product.getImagesURLs();
-        for(String url:imagesToDelete){
+        //Eliminar las imagenes que ya poseia el producto
+        for(String url:previousProduct.getImagesURLs()){
             this.deleteImageProduct(url);
         }
-        productRepository.deleteById(id);
+
+        //Subimos los Archivos de imagen a CLOUDINARY y creamos el ARRAY de URLs
+        List<String> newImages = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String imageURL = uploadImage(file);
+            newImages.add(imageURL);
+        }
+
+        //Seteamos los nuevos valores al Producto existente
+        previousProduct.setName(productDTO.getName());
+        previousProduct.setShortDescription(productDTO.getShortDescription());
+        previousProduct.setCategory(productDTO.getCategory());
+        previousProduct.setEmail(productDTO.getEmail());
+        previousProduct.setPhoneNumber(productDTO.getPhoneNumber());
+        previousProduct.setInstagram(productDTO.getInstagram());
+        previousProduct.setFacebook(productDTO.getFacebook());
+        previousProduct.setCountry(productDTO.getCountry());
+        previousProduct.setProvince(productDTO.getProvince());
+        previousProduct.setCity(productDTO.getCity());
+        previousProduct.setLongDescription(productDTO.getLongDescription());
+        previousProduct.setImagesURLs(newImages);
+
+        //Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
+        return productRepository.save(previousProduct);
+    }
+
+    @Override
+    public String deleteProduct(Long id) throws IOException {
+        Product product = productRepository.findById(id).orElse(null);
+        if(product!=null){
+            List<String>imagesToDelete = product.getImagesURLs();
+            for(String url:imagesToDelete){
+                this.deleteImageProduct(url);
+            }
+            productRepository.deleteById(id);
+            return "Producto eliminado correctamente";
+        }
+        else return "El producto con el ID " + id + " no existe.";
     }
 
     //Aux Methods

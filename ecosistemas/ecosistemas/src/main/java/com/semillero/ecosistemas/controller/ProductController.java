@@ -81,6 +81,49 @@ public class ProductController {
         }
     }
 
+    //Update Endpoint (Just for Suppliers)
+    @PreAuthorize("hasRole('SUPPLIER')")
+    @PutMapping("/update/{productID}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long productID,
+            @RequestParam("name") String name,
+            @RequestParam("shortDescription") String shortDescription,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("email") String email,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("instagram") String instagram,
+            @RequestParam("facebook") String facebook,
+            @RequestParam("countryId") Long countryId,
+            @RequestParam("provinceId") Long provinceId,
+            @RequestParam("city") String city,
+            @RequestParam("longDescription") String longDescription,
+            @RequestParam("files") List<MultipartFile> files) {
+
+        try {
+            // Construir el ProductDTO
+            ProductDTO productDTO = productService.buildProductDTO(
+                    name,
+                    shortDescription,
+                    categoryId,
+                    email,
+                    phoneNumber,
+                    instagram,
+                    facebook,
+                    countryId,
+                    provinceId,
+                    city,
+                    longDescription
+            );
+
+            return ResponseEntity.ok(productService.updateProduct(productID, productDTO, files));
+
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(null);
+        }
+    }
+
 
     //Find one Product by ID Endpoint (Just for Admins)
     @PreAuthorize("hasRole('ADMIN')")
@@ -129,24 +172,12 @@ public class ProductController {
         return ResponseEntity.ok("Se ha actualizado el STATUS del producto y se ha enviado el feedback al Proveedor.");
     }
 
-}
-
-
-    /*
+    //Delete product Endpoint (Just for Suppliers)
     @PreAuthorize("hasRole('SUPPLIER')")
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id,
-                                                 @ModelAttribute ProductDTO productDTO,
-                                                 @RequestParam("files") List<MultipartFile> files) throws IOException {
-        Product product = productService.editProduct(id, productDTO, files);
-        return ResponseEntity.ok(product);
+    @DeleteMapping("/delete/{productID}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productID) throws IOException {
+        String response = productService.deleteProduct(productID);
+        return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/changestatus/{id}")
-    public ResponseEntity<Product> changeStatus(@PathVariable Long id, @RequestBody String status) {
-        Product changeStatus = productService.changeStatus(id, status);
-        return ResponseEntity.ok(changeStatus);
-    }
-
-     */
+}
