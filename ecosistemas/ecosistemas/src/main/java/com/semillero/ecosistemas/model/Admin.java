@@ -27,7 +27,7 @@ public class Admin extends User{
     @Override
     public void prePersist() {
         super.prePersist();
-        setRole(Role.ADMIN);
+        setRole(Role.ROLE_ADMIN);
         setDeleted(false);
         if (publicationList == null) {
             publicationList = new ArrayList<>();

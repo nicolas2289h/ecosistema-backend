@@ -28,7 +28,7 @@ public class Supplier extends User {
     @Override
     public void prePersist() {
         super.prePersist();
-        setRole(Role.SUPPLIER);
+        setRole(Role.ROLE_SUPPLIER);
         setDeleted(false);
     }
 }
