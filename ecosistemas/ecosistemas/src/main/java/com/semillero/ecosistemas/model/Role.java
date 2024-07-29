@@ -1,7 +1,7 @@
 package com.semillero.ecosistemas.model;
 
 public enum Role {
-    USER,
-    ADMIN,
-    SUPPLIER
+    ROLE_USER,
+    ROLE_ADMIN,
+    ROLE_SUPPLIER
 }
