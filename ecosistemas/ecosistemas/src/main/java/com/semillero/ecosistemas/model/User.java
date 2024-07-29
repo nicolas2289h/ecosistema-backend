@@ -40,7 +40,7 @@ public class User implements UserDetails {
             deleted = false;
         }
         if (role == null) {
-            role = Role.USER;
+            role = Role.ROLE_USER;
         }
     }
 
