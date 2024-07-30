@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
-    //Create
-    public User saveUser(User user);
 
     //Find
     public Optional<User> findUserById(Long id);
@@ -17,5 +15,5 @@ public interface IUserService {
     public List<User> findAllUsers();
 
     //Update (Change State --> deleted)
-    public void switchState(User user);
+    public void deactivateUser(User user);
 }

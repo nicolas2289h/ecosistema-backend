@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +34,8 @@ public class ProductController {
     @Autowired
     private IProvinceService provinceService;
 
-    //Create Endpoint (Just for Suppliers)
-    @PreAuthorize("hasRole('SUPPLIER')")
+    //CREATE A PRODUCT (SUPPLIER)
+//    @PreAuthorize("hasRole('SUPPLIER')")
     @PostMapping
     public ResponseEntity<Product> createProduct(
             @RequestParam("name") String name,
@@ -81,8 +82,8 @@ public class ProductController {
         }
     }
 
-    //Update Endpoint (Just for Suppliers)
-    @PreAuthorize("hasRole('SUPPLIER')")
+    //UPDATE PRODUCT (SUPPLIER) - Esperar a ver el modelo de modificacion del front para la gestion de img
+//    @PreAuthorize("hasRole('SUPPLIER')")
     @PutMapping("/update/{productID}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable Long productID,
@@ -124,46 +125,68 @@ public class ProductController {
         }
     }
 
-
-    //Find one Product by ID Endpoint (Just for Admins)
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/find/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable Long id){
-        Optional<Product> optionalProduct = productService.findProductById(id);
-        return optionalProduct.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    //Searchbar Endpoint
-    @GetMapping("/search/{name}")
-    public ResponseEntity<List<Product>> findProductByName(@PathVariable String name){
-        List<Product> products = productService.findProductByName(name);
-        return ResponseEntity.ok(products);
-    }
-
-    //Get All Products Endpoint
-    @GetMapping("/all")
-    public ResponseEntity<List<Product>> getAllProducts(){
-        List<Product>allProducts = productService.getAllProducts();
-        return ResponseEntity.ok(allProducts);
-    }
-
-    //Get Products grouped by Supplier (Suppliers and Admins)
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER')")
+    //GET SUPPLIER'S PRODUCTS (SUPPLIER)
+//    @PreAuthorize("hasRole('SUPPLIER')")
     @GetMapping("/{supplierID}")
     public ResponseEntity<List<Product>> getProductsBySupplier(@PathVariable Long supplierID){
         List<Product>productsBySupplier = productService.getProductsBySupplier(supplierID);
         return ResponseEntity.ok(productsBySupplier);
     }
 
-    //Get Products grouped by Category (All Users)
-    @GetMapping("/category/{categoryID}")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryID){
-        List<Product>productsByCategory = productService.getProductsByCategory(categoryID);
-        return ResponseEntity.ok(productsByCategory);
+    //DELETE PRODUCT (SUPPLIER)
+//    @PreAuthorize("hasRole('SUPPLIER')")
+    @DeleteMapping("/delete/{productID}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productID) throws IOException {
+        String response = productService.deleteProduct(productID);
+        return ResponseEntity.ok(response);
     }
 
-    //Send Feedback and Set Status (Just For Admins)
-    @PreAuthorize("hasRole('ADMIN')")
+    //FIND PRODUCT BY ID (ADMIN)
+//    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Product> findProductById(@PathVariable Long id){
+        Optional<Product> optionalProduct = productService.findProductById(id);
+        return optionalProduct.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    //GET ALL PRODUCTS (ADMIN)
+//    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public ResponseEntity<List<Product>> getAllProducts(){
+        List<Product>allProducts = productService.getAllProducts();
+        return ResponseEntity.ok(allProducts);
+    }
+
+    //GET PRODUCTS WITH "REVISION_INICIAL" (ADMIN)
+//    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/revision")
+    public ResponseEntity<List<Product>> getProductsToRevision(){
+        List<Product>allProducts = productService.getAllProducts();
+        List<Product>revisionProducts = new ArrayList<>();
+        for(Product product:allProducts){
+            if(product.getStatus().toString().equals("REVISION_INICIAL")&&!product.getDeleted()){
+                revisionProducts.add(product);
+            }
+        }
+        return ResponseEntity.ok(revisionProducts);
+    }
+
+    //GET PRODUCTS WITH "CAMBIOS_REALIZADOS" (ADMIN)
+//    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/withchanges")
+    public ResponseEntity<List<Product>> getProductsWithChanges(){
+        List<Product>allProducts = productService.getAllProducts();
+        List<Product>changedProducts = new ArrayList<>();
+        for(Product product:allProducts){
+            if(product.getStatus().toString().equals("CAMBIOS_REALIZADOS")&&!product.getDeleted()){
+                changedProducts.add(product);
+            }
+        }
+        return ResponseEntity.ok(changedProducts);
+    }
+
+    //SEND FEEDBACK AND SET STATUS (ADMIN)
+//    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/feedback/{productID}")
     public ResponseEntity<String> sendFeedbackStatus(@PathVariable Long productID,
                                                      @RequestParam String status,
@@ -172,12 +195,42 @@ public class ProductController {
         return ResponseEntity.ok("Se ha actualizado el STATUS del producto y se ha enviado el feedback al Proveedor.");
     }
 
-    //Delete product Endpoint (Just for Suppliers)
-    @PreAuthorize("hasRole('SUPPLIER')")
-    @DeleteMapping("/delete/{productID}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long productID) throws IOException {
-        String response = productService.deleteProduct(productID);
-        return ResponseEntity.ok(response);
+    //GET ALL VISIBLE PRODUCTS (ANY)
+    @GetMapping
+    public ResponseEntity<List<Product>> getActiveProducts(){
+        List<Product>allProducts = productService.getAllProducts();
+        List<Product>acceptedProducts = new ArrayList<>();
+        for(Product product:allProducts){
+            if(product.getStatus().toString().equals("ACEPTADO")&&!product.getDeleted()){
+                acceptedProducts.add(product);
+            }
+        }
+        return ResponseEntity.ok(acceptedProducts);
     }
 
+    //GET PRODUCTS BY CATEGORY (ANY)
+    @GetMapping("/category/{categoryID}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryID){
+        List<Product>productsByCategory = productService.getProductsByCategory(categoryID);
+        List<Product>acceptedProducts = new ArrayList<>();
+        for(Product product:productsByCategory){
+            if(product.getStatus().toString().equals("ACEPTADO")&&!product.getDeleted()){
+                acceptedProducts.add(product);
+            }
+        }
+        return ResponseEntity.ok(acceptedProducts);
+    }
+
+    //FIND PRODUCT BY NAME (SEARCHBAR - ANY)
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<Product>> findProductByName(@PathVariable String name){
+        List<Product> allProducts = productService.findProductByName(name);
+        List<Product> acceptedProducts = new ArrayList<>();
+        for(Product product:allProducts){
+            if(product.getStatus().toString().equals("ACEPTADO")){
+                acceptedProducts.add(product);
+            }
+        }
+        return ResponseEntity.ok(acceptedProducts);
+    }
 }

@@ -13,11 +13,13 @@ public class SupplierService implements ISupplierService{
     @Autowired
     ISupplierRepository supplierRepository;
 
+    //CREATE
     @Override
     public Supplier saveSupplier(Supplier supplier) {
         return supplierRepository.save(supplier);
     }
 
+    //FIND
     @Override
     public Optional<Supplier> findSupplierById(Long id) {
         return supplierRepository.findById(id);
@@ -28,18 +30,20 @@ public class SupplierService implements ISupplierService{
         return supplierRepository.findSupplierByEmail(email);
     }
 
+    //READ
     @Override
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
 
+    //UPDATE
     @Override
-    public void switchState(Supplier supplier) {
-        if (!supplier.getDeleted()){
-            supplier.setDeleted(true); // Set deleted TRUE --> Account deactivation
-        }
-        else{
-            supplier.setDeleted(false); // Set deleted FALSE --> Account Reactivation
-        }
+    public Supplier updateSupplier(Long id, Supplier supplier) {
+        return null;
+    }
+
+    @Override
+    public void deactivateSupplier(Supplier supplier) {
+        supplier.setDeleted(true); // Set deleted TRUE --> Account deactivation
     }
 }

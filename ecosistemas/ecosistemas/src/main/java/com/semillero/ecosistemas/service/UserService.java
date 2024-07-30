@@ -15,11 +15,6 @@ public class UserService implements IUserService {
     IUserRepository userRepository;
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -35,12 +30,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void switchState(User user) {
-        if (!user.getDeleted()){
+    public void deactivateUser(User user) {
             user.setDeleted(true); // Set deleted TRUE --> Account deactivation
-        }
-        else{
-            user.setDeleted(false); // Set deleted FALSE --> Account Reactivation
-        }
     }
 }

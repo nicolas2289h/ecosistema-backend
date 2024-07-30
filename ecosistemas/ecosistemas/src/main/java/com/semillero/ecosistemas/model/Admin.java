@@ -17,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "admins")
 public class Admin extends User{
 
     @ElementCollection
@@ -28,9 +27,5 @@ public class Admin extends User{
     public void prePersist() {
         super.prePersist();
         setRole(Role.ADMIN);
-        setDeleted(false);
-        if (publicationList == null) {
-            publicationList = new ArrayList<>();
-        }
     }
 }

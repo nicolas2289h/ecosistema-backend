@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,8 +20,9 @@ import java.util.List;
 @Table(name="users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String lastName;
     private String email;
@@ -38,9 +39,6 @@ public class User implements UserDetails {
     public void prePersist() {
         if (deleted == null) {
             deleted = false;
-        }
-        if (role == null) {
-            role = Role.USER;
         }
     }
 
