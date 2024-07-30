@@ -13,11 +13,13 @@ public class AdminService implements IAdminService{
     @Autowired
     IAdminRepository adminRepository;
 
+    //CREATE
     @Override
     public Admin saveAdmin(Admin admin) {
         return adminRepository.save(admin);
     }
 
+    //FIND
     @Override
     public Optional<Admin> findAdminById(Long id) {
         return adminRepository.findById(id);
@@ -28,18 +30,20 @@ public class AdminService implements IAdminService{
         return adminRepository.findAdminByEmail(email);
     }
 
+    //READ
     @Override
     public List<Admin> getAllAdmins() {
         return adminRepository.findAll();
     }
 
+    //UPDATE
     @Override
-    public void switchState(Admin admin) {
-        if (!admin.getDeleted()){
-            admin.setDeleted(true); // Set deleted TRUE --> Account deactivation
-        }
-        else{
-            admin.setDeleted(false); // Set deleted FALSE --> Account Reactivation
-        }
+    public Admin updateAdmin(Long id, Admin admin) {
+        return null;
+    }
+
+    @Override
+    public void deactivateAdmin(Admin admin) {
+        admin.setDeleted(true); // Set deleted TRUE --> Account deactivation
     }
 }

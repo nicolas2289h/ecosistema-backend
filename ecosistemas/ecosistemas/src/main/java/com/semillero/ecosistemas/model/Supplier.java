@@ -16,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name="suppliers")
 public class Supplier extends User {
 
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -28,7 +27,7 @@ public class Supplier extends User {
     @Override
     public void prePersist() {
         super.prePersist();
-        setRole(Role.ROLE_SUPPLIER);
+        setRole(Role.SUPPLIER);
         setDeleted(false);
     }
 }

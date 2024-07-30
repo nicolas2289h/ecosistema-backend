@@ -17,7 +17,12 @@ public class ProvinceController {
     @Autowired
     private IProvinceService provinceService;
 
-    @GetMapping("/country/{countryId}")
+    @GetMapping("/{provinceID}")
+    public Province getProvinceById(@PathVariable Long provinceID){
+        return provinceService.getProvinceById(provinceID);
+    }
+
+    @GetMapping("/country/{countryID}")
     public List<Province> getProvincesByCountryId(@PathVariable Long countryId) {
         return provinceService.getProvincesByCountryId(countryId);
     }

@@ -81,5 +81,8 @@ public class Product {
         if (deleted == null) {
             deleted = false;
         }
+        if (feedback == null) {
+            feedback = "Proveedor en revisión";
+        }
     }
 }

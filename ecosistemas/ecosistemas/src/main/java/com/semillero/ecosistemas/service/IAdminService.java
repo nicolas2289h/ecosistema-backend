@@ -1,22 +1,24 @@
 package com.semillero.ecosistemas.service;
 
 import com.semillero.ecosistemas.model.Admin;
+import com.semillero.ecosistemas.model.Supplier;
 import com.semillero.ecosistemas.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IAdminService {
-    //Create
+    //CREATE
     public Admin saveAdmin(Admin admin);
 
-    //Find
+    //FIND
     public Optional<Admin> findAdminById(Long id);
     public Optional<Admin> findAdminByEmail(String email);
 
-    //Read
+    //READ
     public List<Admin> getAllAdmins();
 
-    //Update (Change State --> deleted)
-    public void switchState(Admin admin);
+    //UPDATE
+    public Admin updateAdmin(Long id, Admin admin);
+    public void deactivateAdmin(Admin admin);
 }

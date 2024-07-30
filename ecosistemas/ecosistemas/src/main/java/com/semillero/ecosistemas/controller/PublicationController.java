@@ -27,7 +27,7 @@ public class PublicationController {
     }
 
     // CREAR UNA NUEVA PUBLICACION
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Publication> createPublication(@Valid @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files) {
         try {
@@ -39,7 +39,7 @@ public class PublicationController {
     }
 
     // ACTUALIZAR UNA PUBLICACION POR ID
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Publication> updatePublication(@Valid @PathVariable Long id, @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files) {
         try {
@@ -53,7 +53,7 @@ public class PublicationController {
     }
 
     // OBTENER LAS PUBLICACIONES ACTIVAS Y NO ACTIVAS
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getall")
     public ResponseEntity<List<Publication>> getAllPublications() {
         try {
@@ -65,7 +65,7 @@ public class PublicationController {
     }
 
     // OBTENER UNA PUBLICACION POR ID (ADMIN) SIN INCREMENTAR LAS VIEWS
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Publication> getPublicationById(@PathVariable @Valid Long id) {
         try {
@@ -86,8 +86,7 @@ public class PublicationController {
         }
     }
 
-    // INCREMENTAR EN UNO LAS VISUALIZACIONES DE UNA PUBLICACION
-    @PreAuthorize("hasAnyRole('SUPPLIER', 'USER')")
+    // INCREMENTAR EN UNO LAS VISUALIZACIONES DE UNA PUBLICACION - REVISAR LOGICA CON NUEVA IMPLEMENTACION
     @GetMapping("/view/{id}")
     public ResponseEntity<Publication> incrementViewPublication(@PathVariable Long id) {
         try {
@@ -98,7 +97,7 @@ public class PublicationController {
     }
 
     // CAMBIAR EL ESTADO DE UNA PUBLICACACION A 'DELETED' (OCULTO)
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/delete/{id}")
     public ResponseEntity<Publication> markAsDeleted(@PathVariable Long id) {
         try {

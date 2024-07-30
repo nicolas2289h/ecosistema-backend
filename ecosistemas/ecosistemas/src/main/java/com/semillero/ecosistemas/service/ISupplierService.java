@@ -1,21 +1,23 @@
 package com.semillero.ecosistemas.service;
 
 import com.semillero.ecosistemas.model.Supplier;
+import com.semillero.ecosistemas.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ISupplierService {
-    //Create
+    //CREATE
     public Supplier saveSupplier(Supplier supplier);
 
-    //Find
+    //FIND
     public Optional<Supplier> findSupplierById(Long id);
     public Optional<Supplier> findSupplierByEmail(String email);
 
-    //Read
+    //READ
     public List<Supplier> getAllSuppliers();
 
-    //Update (Change State --> deleted)
-    public void switchState(Supplier supplier);
+    //UPDATE
+    public Supplier updateSupplier(Long id, Supplier supplier);
+    public void deactivateSupplier(Supplier supplier);
 }
