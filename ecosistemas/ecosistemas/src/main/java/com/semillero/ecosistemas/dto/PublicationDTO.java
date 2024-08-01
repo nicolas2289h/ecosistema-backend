@@ -3,7 +3,6 @@ package com.semillero.ecosistemas.dto;
 import com.semillero.ecosistemas.model.Publication;
 import jakarta.persistence.ElementCollection;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -30,8 +29,7 @@ public class PublicationDTO {
 
     private boolean deleted;
 
-    private LocalDateTime creationDate = LocalDateTime.now();
-
+    private LocalDate creationDate = LocalDate.now();
     private Integer viewCount = 0;
 
     @ElementCollection

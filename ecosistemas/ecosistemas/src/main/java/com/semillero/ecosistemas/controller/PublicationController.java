@@ -29,9 +29,10 @@ public class PublicationController {
     // CREAR UNA NUEVA PUBLICACION
 //    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Publication> createPublication(@Valid @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files) {
+    public ResponseEntity<Publication> createPublication(@Valid @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files, @RequestHeader("Authorization") String token) {
         try {
-            Publication savedPublication = publicationService.savePublication(publicationDTO, files);
+            String finalToken = token.replace("Bearer ", "");
+            Publication savedPublication = publicationService.savePublication(publicationDTO, files, finalToken);
             return new ResponseEntity<>(savedPublication, HttpStatus.CREATED);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
