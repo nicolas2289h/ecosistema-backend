@@ -1,7 +1,9 @@
 package com.semillero.ecosistemas.service;
 
+import com.semillero.ecosistemas.jwt.JwtService;
 import com.semillero.ecosistemas.model.Admin;
 import com.semillero.ecosistemas.repository.IAdminRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 public class AdminService implements IAdminService{
     @Autowired
     IAdminRepository adminRepository;
+    @Autowired
+    JwtService jwtService;
 
     //CREATE
     @Override
@@ -45,5 +49,11 @@ public class AdminService implements IAdminService{
     @Override
     public void deactivateAdmin(Admin admin) {
         admin.setDeleted(true); // Set deleted TRUE --> Account deactivation
+    }
+
+    @Override
+    public Long extractAdminIdFromToken(String token) {
+        Claims claims = jwtService.extractClaims(token);
+        return claims.get("id", Long.class);
     }
 }

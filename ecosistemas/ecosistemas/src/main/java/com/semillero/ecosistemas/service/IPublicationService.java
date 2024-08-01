@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IPublicationService {
-    Publication savePublication(PublicationDTO publicationDTO, List<MultipartFile> files) throws IOException;
+    Publication savePublication(PublicationDTO publicationDTO, List<MultipartFile> files, String token) throws IOException;
 
     Publication updatePublication(Long idPublication, PublicationDTO publicationDTO, List<MultipartFile> files) throws IOException;
 
