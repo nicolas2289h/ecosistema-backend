@@ -2,6 +2,7 @@ package com.semillero.ecosistemas.controller;
 
 import com.semillero.ecosistemas.dto.ProductDTO;
 import com.semillero.ecosistemas.model.Product;
+import com.semillero.ecosistemas.model.Supplier;
 import com.semillero.ecosistemas.service.IProductService;
 import com.semillero.ecosistemas.service.ICategoryService;
 import com.semillero.ecosistemas.service.ICountryService;
@@ -43,11 +44,11 @@ public class ProductController {
             @RequestParam("categoryId") Long categoryId,
             @RequestParam("email") String email,
             @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("instagram") String instagram,
-            @RequestParam("facebook") String facebook,
+            @RequestParam(required = false, name = "instagram") String instagram,
+            @RequestParam(required = false, name = "facebook") String facebook,
             @RequestParam("countryId") Long countryId,
             @RequestParam("provinceId") Long provinceId,
-            @RequestParam("city") String city,
+            @RequestParam(required = false, name = "city") String city,
             @RequestParam("longDescription") String longDescription,
             @RequestParam("files") List<MultipartFile> files,
             @RequestHeader("Authorization") String authorizationHeader) {
@@ -55,6 +56,7 @@ public class ProductController {
         try {
             // Extraer el token del header
             String token = authorizationHeader.replace("Bearer ", "");
+
 
             // Construir el ProductDTO
             ProductDTO productDTO = productService.buildProductDTO(
@@ -73,8 +75,12 @@ public class ProductController {
 
             // Crear el producto usando el ProductDTO, archivos y token
             Product product = productService.createProduct(productDTO, files, token);
-
-            return ResponseEntity.ok(product);
+            if(product==null){
+                return ResponseEntity.badRequest().build();
+            }
+            else{
+                return ResponseEntity.ok(product);
+            }
         } catch (IOException e) {
             return ResponseEntity.status(500).body(null);
         } catch (IllegalArgumentException e) {
@@ -82,7 +88,7 @@ public class ProductController {
         }
     }
 
-    //UPDATE PRODUCT (SUPPLIER) - Esperar a ver el modelo de modificacion del front para la gestion de img
+    //UPDATE PRODUCT (SUPPLIER)
 //    @PreAuthorize("hasRole('SUPPLIER')")
     @PutMapping("/update/{productID}")
     public ResponseEntity<Product> updateProduct(
@@ -92,13 +98,14 @@ public class ProductController {
             @RequestParam("categoryId") Long categoryId,
             @RequestParam("email") String email,
             @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("instagram") String instagram,
-            @RequestParam("facebook") String facebook,
+            @RequestParam(required = false, name = "instagram") String instagram,
+            @RequestParam(required = false, name = "facebook") String facebook,
             @RequestParam("countryId") Long countryId,
             @RequestParam("provinceId") Long provinceId,
-            @RequestParam("city") String city,
+            @RequestParam(required = false, name = "city") String city,
             @RequestParam("longDescription") String longDescription,
-            @RequestParam("files") List<MultipartFile> files) {
+            @RequestParam(required = false, name = "URLsToDelete") List<String> URLsToDelete,
+            @RequestParam(required = false, name = "files") List<MultipartFile> files) {
 
         try {
             // Construir el ProductDTO
@@ -116,7 +123,7 @@ public class ProductController {
                     longDescription
             );
 
-            return ResponseEntity.ok(productService.updateProduct(productID, productDTO, files));
+            return ResponseEntity.ok(productService.updateProduct(productID, productDTO, URLsToDelete, files));
 
         } catch (IOException e) {
             return ResponseEntity.status(500).body(null);
