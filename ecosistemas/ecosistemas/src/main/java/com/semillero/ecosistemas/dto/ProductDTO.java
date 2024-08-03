@@ -47,8 +47,6 @@ public class ProductDTO {
     @Size(max = 300, message = "La cantidad máxima de caracteres es 300.")
     private String longDescription;
 
-    // Lista para URLs de imágenes eliminadas
-    private List<String> urlsToDelete = new ArrayList<>();
 
     public static Product toEntity(ProductDTO productDto) {
         return Product.builder()
@@ -79,7 +77,6 @@ public class ProductDTO {
                 .province(product.getProvince())
                 .city(product.getCity())
                 .longDescription(product.getLongDescription())
-                .urlsToDelete(new ArrayList<>(product.getImagesURLs())) // Asumiendo que las URLs eliminadas pueden ser tratadas aquí
                 .build();
     }
 }

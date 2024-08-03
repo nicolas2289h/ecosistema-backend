@@ -35,7 +35,7 @@ public interface IProductService {
 
         // Update
         public void setFeedStatus(Long id, String status, String feedback);
-        public Product updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException;
+        public Product updateProduct(Long id, ProductDTO productDTO, List<String> URLsToDelete, List<MultipartFile> files) throws IOException;
 
         // Delete
         public String deleteProduct(Long id) throws IOException;

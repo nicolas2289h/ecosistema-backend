@@ -58,58 +58,68 @@ public class ProductService implements IProductService {
         productDTO.setCategory(category);
         productDTO.setEmail(email);
         productDTO.setPhoneNumber(phoneNumber);
-        productDTO.setInstagram(instagram);
-        productDTO.setFacebook(facebook);
+        productDTO.setInstagram(instagram != null ? instagram : "");
+        productDTO.setFacebook(facebook != null ? facebook : "");
         productDTO.setCountry(country);
         productDTO.setProvince(province);
-        productDTO.setCity(city);
+        productDTO.setCity(city != null ? city : "");
         productDTO.setLongDescription(longDescription);
 
         return productDTO;
     }
 
+
     @Override
     public Product createProduct(ProductDTO productDTO,
                                  List<MultipartFile> files,
                                  String token) throws IOException {
-        //Subimos los Archivos de imagen a CLOUDINARY y creamos el ARRAY de URLs
-        List<String> productImages = new ArrayList<>();
-        for (MultipartFile file : files) {
-            String imageURL = uploadImage(file);
-            productImages.add(imageURL);
-        }
 
         //Obtenemos el Usuario SUPPLIER que esta creando el producto a partir del TOKEN
         Long supplierId = extractSupplierIdFromToken(token);
         Supplier supplier = supplierService.findSupplierById(supplierId)
                 .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
 
-        //Creamos el Producto y completamos sus variables con los campos del ProductDTO, el Array de URLs y el Supplier
-        Product product = Product.builder()
-                .name(productDTO.getName())
-                .shortDescription(productDTO.getShortDescription())
-                .category(productDTO.getCategory())
-                .email(productDTO.getEmail())
-                .phoneNumber(productDTO.getPhoneNumber())
-                .instagram(productDTO.getInstagram())
-                .facebook(productDTO.getFacebook())
-                .country(productDTO.getCountry())
-                .province(productDTO.getProvince())
-                .city(productDTO.getCity())
-                .longDescription(productDTO.getLongDescription())
-                .imagesURLs(productImages)
-                .supplier(supplier)
-                .build();
+        //Chequeamos la cantidad de productos del Supplier
+        if(supplier.getProductList().size()>=3){
+            return null;
+        }
+        else{
+            //Subimos los Archivos de imagen a CLOUDINARY y creamos el ARRAY de URLs
+            List<String> productImages = new ArrayList<>();
+            for (MultipartFile file : files) {
+                String imageURL = uploadImage(file);
+                productImages.add(imageURL);
+            }
 
-        //Guardamos el Producto En Base de Datos
-        productRepository.save(product);
 
-        //Agregamos el producto a la lista de productos del Supplier
-        List<Product>addProduct = supplier.getProductList();
-        addProduct.add(product);
 
-        //Retornamos el Producto para la Response
-        return product;
+            //Creamos el Producto y completamos sus variables con los campos del ProductDTO, el Array de URLs y el Supplier
+            Product product = Product.builder()
+                    .name(productDTO.getName())
+                    .shortDescription(productDTO.getShortDescription())
+                    .category(productDTO.getCategory())
+                    .email(productDTO.getEmail())
+                    .phoneNumber(productDTO.getPhoneNumber())
+                    .instagram(productDTO.getInstagram())
+                    .facebook(productDTO.getFacebook())
+                    .country(productDTO.getCountry())
+                    .province(productDTO.getProvince())
+                    .city(productDTO.getCity())
+                    .longDescription(productDTO.getLongDescription())
+                    .imagesURLs(productImages)
+                    .supplier(supplier)
+                    .build();
+
+            //Guardamos el Producto En Base de Datos
+            productRepository.save(product);
+
+            //Agregamos el producto a la lista de productos del Supplier
+            List<Product>addProduct = supplier.getProductList();
+            addProduct.add(product);
+
+            //Retornamos el Producto para la Response
+            return product;
+        }
     }
 
     // Find
@@ -173,39 +183,46 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public Product updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> files) throws IOException {
-        //Traer el producto original
-        Product previousProduct = productRepository.findById(id).orElse(null);
+    public Product updateProduct(Long id, ProductDTO productDTO, List<String> URLsToDelete, List<MultipartFile> files) throws IOException {
+        // Traer el producto original
+        Product previousProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
 
-        //Eliminar las imagenes que ya poseia el producto
-        for(String url:previousProduct.getImagesURLs()){
-            this.deleteImageProduct(url);
+        // Lista de imágenes del producto
+        List<String> previousImages = new ArrayList<>(previousProduct.getImagesURLs());
+
+        // Camino --> Se han borrado imágenes cargadas previamente
+        if (URLsToDelete != null) {
+            // Eliminación de Imágenes obsoletas del Producto
+            previousImages.removeAll(URLsToDelete);
+            for (String urlToDelete : URLsToDelete) {
+                this.deleteImageProduct(urlToDelete);
+            }
         }
 
-        //Subimos los Archivos de imagen a CLOUDINARY y creamos el ARRAY de URLs
-        List<String> newImages = new ArrayList<>();
+        // Subimos los nuevos archivos de imagen a CLOUDINARY y agregamos la URL a la lista
         for (MultipartFile file : files) {
             String imageURL = uploadImage(file);
-            newImages.add(imageURL);
+            previousImages.add(imageURL);
         }
 
-        //Seteamos los nuevos valores al Producto existente
+        // Seteamos los nuevos valores al Producto existente
         previousProduct.setName(productDTO.getName());
         previousProduct.setShortDescription(productDTO.getShortDescription());
         previousProduct.setCategory(productDTO.getCategory());
         previousProduct.setEmail(productDTO.getEmail());
         previousProduct.setPhoneNumber(productDTO.getPhoneNumber());
-        previousProduct.setInstagram(productDTO.getInstagram());
-        previousProduct.setFacebook(productDTO.getFacebook());
+        previousProduct.setInstagram(productDTO.getInstagram() != null ? productDTO.getInstagram() : "");
+        previousProduct.setFacebook(productDTO.getFacebook() != null ? productDTO.getFacebook() : "");
         previousProduct.setCountry(productDTO.getCountry());
         previousProduct.setProvince(productDTO.getProvince());
-        previousProduct.setCity(productDTO.getCity());
+        previousProduct.setCity(productDTO.getCity() != null ? productDTO.getCity() : "");
         previousProduct.setLongDescription(productDTO.getLongDescription());
-        previousProduct.setImagesURLs(newImages);
+        previousProduct.setImagesURLs(previousImages);
 
-        //Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
+        // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
         return productRepository.save(previousProduct);
     }
+
 
     @Override
     public String deleteProduct(Long id) throws IOException {
