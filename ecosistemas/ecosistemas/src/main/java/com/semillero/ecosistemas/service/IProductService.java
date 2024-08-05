@@ -32,6 +32,7 @@ public interface IProductService {
         public List<Product> getAllProducts();
         public List<Product> getProductsBySupplier(Long id);
         public List<Product> getProductsByCategory(Long id);
+        public List<Product> getProductsModifiedInLastWeek();
 
         // Update
         public void setFeedStatus(Long id, String status, String feedback);

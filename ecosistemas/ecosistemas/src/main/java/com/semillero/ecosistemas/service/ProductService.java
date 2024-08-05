@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -163,6 +164,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public List<Product> getProductsModifiedInLastWeek() {
+        LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
+        return productRepository.findByStatusDateAfter(lastWeek);
+    }
+
+    @Override
     public void setFeedStatus(Long id, String status, String feedback) {
         Optional<Product> optionalProduct = this.findProductById(id);
 
@@ -172,6 +179,7 @@ public class ProductService implements IProductService {
                 Status newStatus = Status.valueOf(status.toUpperCase());
                 toFeedbackProduct.setStatus(newStatus);
                 toFeedbackProduct.setFeedback(feedback);
+                toFeedbackProduct.setStatusDate(LocalDateTime.now());
                 productRepository.save(toFeedbackProduct);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("El status proporcionado no es válido: " + status);
@@ -221,6 +229,7 @@ public class ProductService implements IProductService {
 
         if(previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS")){
             previousProduct.setStatus(Status.CAMBIOS_REALIZADOS);
+            previousProduct.setStatusDate(LocalDateTime.now());
         }
 
         // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
