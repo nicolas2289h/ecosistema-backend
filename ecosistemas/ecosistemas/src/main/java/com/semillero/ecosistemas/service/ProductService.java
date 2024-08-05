@@ -63,7 +63,7 @@ public class ProductService implements IProductService {
         productDTO.setCountry(country);
         productDTO.setProvince(province);
         productDTO.setCity(city != null ? city : "");
-        productDTO.setLongDescription(longDescription);
+        productDTO.setLongDescription(longDescription != null ? longDescription : "");
 
         return productDTO;
     }
@@ -216,8 +216,12 @@ public class ProductService implements IProductService {
         previousProduct.setCountry(productDTO.getCountry());
         previousProduct.setProvince(productDTO.getProvince());
         previousProduct.setCity(productDTO.getCity() != null ? productDTO.getCity() : "");
-        previousProduct.setLongDescription(productDTO.getLongDescription());
+        previousProduct.setLongDescription(productDTO.getLongDescription()!= null ? productDTO.getLongDescription() : "");
         previousProduct.setImagesURLs(previousImages);
+
+        if(previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS")){
+            previousProduct.setStatus(Status.CAMBIOS_REALIZADOS);
+        }
 
         // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
         return productRepository.save(previousProduct);

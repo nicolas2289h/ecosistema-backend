@@ -52,7 +52,6 @@ public class Product {
 
     private String city;
 
-    @NotBlank(message = "El campo descripción completa es obligatorio.")
     @Length(max = 300, message = "La cantidad máxima de caracteres es 300.")
     private String longDescription;
 
