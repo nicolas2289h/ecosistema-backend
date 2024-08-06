@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/provinces")
-public class ProvinceController {
-
-    @Autowired
-    private IProvinceService provinceService;
-
-    @GetMapping("/{provinceID}")
-    public Province getProvinceById(@PathVariable Long provinceID){
-        return provinceService.getProvinceById(provinceID);
+    @RestController
+    @RequestMapping("/api/provinces")
+    public class ProvinceController {
+    
+        @Autowired
+        private IProvinceService provinceService;
+    
+        @GetMapping("/{provinceID}")
+        public Province getProvinceById(@PathVariable Long provinceID){
+            return provinceService.getProvinceById(provinceID);
+        }
+    
+        @GetMapping("/country/{countryID}")
+        public List<Province> getProvincesByCountryId(@PathVariable Long countryId) {
+            return provinceService.getProvincesByCountryId(countryId);
+        }
     }
-
-    @GetMapping("/country/{countryID}")
-    public List<Province> getProvincesByCountryId(@PathVariable Long countryId) {
-        return provinceService.getProvincesByCountryId(countryId);
-    }
-}
