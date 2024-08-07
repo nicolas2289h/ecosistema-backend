@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -63,7 +64,7 @@ public class ProductService implements IProductService {
         productDTO.setCountry(country);
         productDTO.setProvince(province);
         productDTO.setCity(city != null ? city : "");
-        productDTO.setLongDescription(longDescription);
+        productDTO.setLongDescription(longDescription != null ? longDescription : "");
 
         return productDTO;
     }
@@ -163,6 +164,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public List<Product> getProductsModifiedInLastWeek() {
+        LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
+        return productRepository.findByStatusDateAfter(lastWeek);
+    }
+
+    @Override
     public void setFeedStatus(Long id, String status, String feedback) {
         Optional<Product> optionalProduct = this.findProductById(id);
 
@@ -172,6 +179,7 @@ public class ProductService implements IProductService {
                 Status newStatus = Status.valueOf(status.toUpperCase());
                 toFeedbackProduct.setStatus(newStatus);
                 toFeedbackProduct.setFeedback(feedback);
+                toFeedbackProduct.setStatusDate(LocalDateTime.now());
                 productRepository.save(toFeedbackProduct);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("El status proporcionado no es válido: " + status);
@@ -192,17 +200,42 @@ public class ProductService implements IProductService {
 
         // Camino --> Se han borrado imágenes cargadas previamente
         if (URLsToDelete != null) {
+            List<String> URLsToKeep = new ArrayList<>();
+
+            // Resguardo de imagenes a mantener
+            for (String previousImage : previousImages) {
+                if (!URLsToDelete.contains(previousImage)) {
+                    URLsToKeep.add(previousImage);
+                }
+            }
+
+            // Verificar que la cantidad de imágenes a mantener respeta el mínimo
+            if (URLsToKeep.isEmpty()) {
+                throw new IllegalArgumentException("El producto debe tener al menos una imagen.");
+            }
+
             // Eliminación de Imágenes obsoletas del Producto
-            previousImages.removeAll(URLsToDelete);
             for (String urlToDelete : URLsToDelete) {
                 this.deleteImageProduct(urlToDelete);
             }
+
+            // Actualizar la lista de imágenes con las URLs a mantener
+            previousImages = URLsToKeep;
         }
 
         // Subimos los nuevos archivos de imagen a CLOUDINARY y agregamos la URL a la lista
-        for (MultipartFile file : files) {
-            String imageURL = uploadImage(file);
-            previousImages.add(imageURL);
+        if (files != null) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String imageURL = uploadImage(file);
+                    previousImages.add(imageURL);
+                }
+            }
+        }
+
+        // Verificar que la cantidad total de imágenes no exceda el máximo permitido
+        if (previousImages.size() > 3) {
+            throw new IllegalArgumentException("El producto no puede tener más de tres imágenes.");
         }
 
         // Seteamos los nuevos valores al Producto existente
@@ -216,12 +249,18 @@ public class ProductService implements IProductService {
         previousProduct.setCountry(productDTO.getCountry());
         previousProduct.setProvince(productDTO.getProvince());
         previousProduct.setCity(productDTO.getCity() != null ? productDTO.getCity() : "");
-        previousProduct.setLongDescription(productDTO.getLongDescription());
+        previousProduct.setLongDescription(productDTO.getLongDescription() != null ? productDTO.getLongDescription() : "");
         previousProduct.setImagesURLs(previousImages);
+
+        if (previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS")) {
+            previousProduct.setStatus(Status.CAMBIOS_REALIZADOS);
+            previousProduct.setStatusDate(LocalDateTime.now());
+        }
 
         // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
         return productRepository.save(previousProduct);
     }
+
 
 
     @Override

@@ -49,7 +49,7 @@ public class ProductController {
             @RequestParam("countryId") Long countryId,
             @RequestParam("provinceId") Long provinceId,
             @RequestParam(required = false, name = "city") String city,
-            @RequestParam("longDescription") String longDescription,
+            @RequestParam(required = false, name = "longDescription") String longDescription,
             @RequestParam("files") List<MultipartFile> files,
             @RequestHeader("Authorization") String authorizationHeader) {
 
@@ -75,8 +75,9 @@ public class ProductController {
 
             // Crear el producto usando el ProductDTO, archivos y token
             Product product = productService.createProduct(productDTO, files, token);
+
             if(product==null){
-                return ResponseEntity.badRequest().build();
+                throw new IllegalArgumentException("El Proveedor ya alcanzo el limite de 3 productos.");
             }
             else{
                 return ResponseEntity.ok(product);
@@ -103,7 +104,7 @@ public class ProductController {
             @RequestParam("countryId") Long countryId,
             @RequestParam("provinceId") Long provinceId,
             @RequestParam(required = false, name = "city") String city,
-            @RequestParam("longDescription") String longDescription,
+            @RequestParam(required = false, name = "longDescription") String longDescription,
             @RequestParam(required = false, name = "URLsToDelete") List<String> URLsToDelete,
             @RequestParam(required = false, name = "files") List<MultipartFile> files) {
 
