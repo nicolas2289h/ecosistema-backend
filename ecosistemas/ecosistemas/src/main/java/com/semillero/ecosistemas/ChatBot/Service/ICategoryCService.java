@@ -1,7 +1,6 @@
-package com.semillero.ecosistemas.service;
+package com.semillero.ecosistemas.ChatBot.Service;
 
-import com.semillero.ecosistemas.model.CategoryC;
-import com.semillero.ecosistemas.model.Country;
+import com.semillero.ecosistemas.ChatBot.Model.CategoryC;
 
 import java.util.List;
 

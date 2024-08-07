@@ -1,6 +1,6 @@
-package com.semillero.ecosistemas.repository;
+package com.semillero.ecosistemas.ChatBot.Repository;
 
-import com.semillero.ecosistemas.model.Question;
+import com.semillero.ecosistemas.ChatBot.Model.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

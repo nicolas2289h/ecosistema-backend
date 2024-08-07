@@ -1,6 +1,6 @@
-package com.semillero.ecosistemas.service;
+package com.semillero.ecosistemas.ChatBot.Service;
 
-import com.semillero.ecosistemas.model.Question;
+import com.semillero.ecosistemas.ChatBot.Model.Question;
 
 import java.util.List;
 

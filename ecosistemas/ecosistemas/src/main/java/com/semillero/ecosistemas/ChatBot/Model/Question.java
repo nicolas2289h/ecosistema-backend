@@ -1,4 +1,4 @@
-package com.semillero.ecosistemas.model;
+package com.semillero.ecosistemas.ChatBot.Model;
 
 import jakarta.persistence.*;
 import lombok.*;

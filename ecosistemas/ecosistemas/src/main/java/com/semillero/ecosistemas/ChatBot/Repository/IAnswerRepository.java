@@ -1,6 +1,6 @@
-package com.semillero.ecosistemas.repository;
+package com.semillero.ecosistemas.ChatBot.Repository;
 
-import com.semillero.ecosistemas.model.Answer;
+import com.semillero.ecosistemas.ChatBot.Model.Answer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IAnswerRepository extends JpaRepository<Answer, Long> {

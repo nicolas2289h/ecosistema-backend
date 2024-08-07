@@ -1,7 +1,7 @@
-package com.semillero.ecosistemas.service;
+package com.semillero.ecosistemas.ChatBot.Service;
 
-import com.semillero.ecosistemas.model.Answer;
-import com.semillero.ecosistemas.repository.IAnswerRepository;
+import com.semillero.ecosistemas.ChatBot.Model.Answer;
+import com.semillero.ecosistemas.ChatBot.Repository.IAnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
-package com.semillero.ecosistemas.controller;
+package com.semillero.ecosistemas.ChatBot.Controller;
 
-import com.semillero.ecosistemas.model.CategoryC;
-import com.semillero.ecosistemas.service.CategoryCService;
+import com.semillero.ecosistemas.ChatBot.Model.CategoryC;
+import com.semillero.ecosistemas.ChatBot.Service.CategoryCService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,19 +24,16 @@ public class CategoryCController {
         return categoryCService.getCategoryById(id);
     }
 
-    //Crear Categoria
     @PostMapping
     public CategoryC createCategory(@RequestBody CategoryC category) {
         return categoryCService.saveCategory(category);
     }
 
-    //Editar
     @PutMapping("/{id}")
     public CategoryC updateCategory(@PathVariable Long id, @RequestBody CategoryC category) {
         category.setId(id);
         return categoryCService.saveCategory(category);
     }
-
 
     @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable Long id) {

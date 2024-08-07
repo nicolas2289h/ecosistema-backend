@@ -1,4 +1,4 @@
-package com.semillero.ecosistemas.model;
+package com.semillero.ecosistemas.ChatBot.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,4 +16,5 @@ public class Answer {
 
     @OneToOne
     private Question question;
+
 }
