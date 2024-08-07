@@ -29,9 +29,11 @@ public class AuthenticationController {
     UserService userService;
 
     @GetMapping("/login")
-    public ResponseEntity<?> saveGoogleUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
+    public ResponseEntity<?> saveGoogleUser(@AuthenticationPrincipal OAuth2User oAuth2User, HttpServletResponse response) throws IOException {
         User newUser = authenticationService.saveGoogleUser(oAuth2User);
         String token = authenticationService.generateJwtToken(newUser);
+
+        response.sendRedirect("http://localhost:5173/login");
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
