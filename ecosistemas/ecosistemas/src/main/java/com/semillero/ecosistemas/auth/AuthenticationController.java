@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -28,9 +29,11 @@ public class AuthenticationController {
     UserService userService;
 
     @GetMapping("/login")
-    public ResponseEntity<?> saveGoogleUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
+    public ResponseEntity<?> saveGoogleUser(@AuthenticationPrincipal OAuth2User oAuth2User, HttpServletResponse response) throws IOException {
         User newUser = authenticationService.saveGoogleUser(oAuth2User);
         String token = authenticationService.generateJwtToken(newUser);
+
+        response.sendRedirect("http://localhost:5173/login");
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
@@ -43,6 +46,15 @@ public class AuthenticationController {
         }
         return "Sesión cerrada.";
     }
+//    @GetMapping("/logout")
+//    public void logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+//        session.invalidate();
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        if (auth != null) {
+//            new SecurityContextLogoutHandler().logout(request, response, auth);
+//        }
+//        response.sendRedirect("http://localhost:5173");
+//    }
 
     @GetMapping("/token")
     public ResponseEntity<?> getToken(@AuthenticationPrincipal OAuth2User oAuth2User) {

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -52,7 +53,6 @@ public class Product {
 
     private String city;
 
-    @NotBlank(message = "El campo descripción completa es obligatorio.")
     @Length(max = 300, message = "La cantidad máxima de caracteres es 300.")
     private String longDescription;
 
@@ -73,6 +73,8 @@ public class Product {
     @JsonBackReference
     private Supplier supplier;
 
+    private LocalDateTime statusDate;
+
     @PrePersist
     public void prePersist() {
         if (status == null) {
@@ -84,5 +86,6 @@ public class Product {
         if (feedback == null) {
             feedback = "Proveedor en revisión";
         }
+        statusDate = LocalDateTime.now();
     }
 }

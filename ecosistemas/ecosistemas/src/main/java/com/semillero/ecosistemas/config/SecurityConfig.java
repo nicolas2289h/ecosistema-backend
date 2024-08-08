@@ -25,19 +25,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/api/auth/login").authenticated()
+                                authorizeRequests
+                                        .requestMatchers("/api/auth/login").authenticated()
 //                                .requestMatchers("/api/users/**", "/api/admins/**", "/api/suppliers/**").hasRole("ADMIN")
-                                .anyRequest().permitAll()
+                                        .anyRequest().permitAll()
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("http://localhost:5173");
-                        })
-                ).logout(logout ->
-                        logout
-                                .invalidateHttpSession(true)
-                                .clearAuthentication(true)
+                .oauth2Login(withDefaults())
+                .logout(logout -> logout
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

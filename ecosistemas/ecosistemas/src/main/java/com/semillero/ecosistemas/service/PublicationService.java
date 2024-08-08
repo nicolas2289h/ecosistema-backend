@@ -3,7 +3,9 @@ package com.semillero.ecosistemas.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.semillero.ecosistemas.dto.PublicationDTO;
+import com.semillero.ecosistemas.model.Admin;
 import com.semillero.ecosistemas.model.Publication;
+import com.semillero.ecosistemas.repository.IAdminRepository;
 import com.semillero.ecosistemas.repository.IPublicationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,15 +19,23 @@ import java.util.NoSuchElementException;
 @Service
 public class PublicationService implements IPublicationService {
     private final IPublicationRepository publicationRepository;
+    private final AdminService adminService;
+    private final IAdminRepository adminRepository;
     private final Cloudinary cloudinary;
 
-    public PublicationService(IPublicationRepository publicationRepository, Cloudinary cloudinary) {
+    public PublicationService(IPublicationRepository publicationRepository, AdminService adminService, IAdminRepository adminRepository, Cloudinary cloudinary) {
         this.publicationRepository = publicationRepository;
+        this.adminService = adminService;
+        this.adminRepository = adminRepository;
         this.cloudinary = cloudinary;
     }
 
     @Override
-    public Publication savePublication(PublicationDTO publicationDTO, List<MultipartFile> files) throws IOException {
+    public Publication savePublication(PublicationDTO publicationDTO, List<MultipartFile> files, String token) throws IOException {
+        Long adminId = adminService.extractAdminIdFromToken(token);
+        Admin foundAdmin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new NoSuchElementException("No se encontró el admin con id: " + adminId));
+
         if (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty())) {
             throw new IllegalArgumentException("Debe adjuntar al menos un archivo.");
         }
@@ -40,7 +50,13 @@ public class PublicationService implements IPublicationService {
 
         publicationDTO.setImagesURLs(imageUrls);
         Publication publication = PublicationDTO.toEntity(publicationDTO);
-        return publicationRepository.save(publication);
+        publicationRepository.save(publication);
+        publication.setCreatorUser(foundAdmin);
+
+        foundAdmin.getPublicationList().add(publication);
+        adminRepository.save(foundAdmin);
+
+        return publication;
     }
 
     @Override

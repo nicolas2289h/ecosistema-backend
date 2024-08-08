@@ -1,5 +1,6 @@
 package com.semillero.ecosistemas.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -33,8 +34,8 @@ public class Publication {
     private boolean deleted;
 
     @Column(updatable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDateTime creationDate = LocalDateTime.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate creationDate = LocalDate.now();
 
     @ElementCollection
     @Size(message = "No se pueden adjuntar más de 3 archivos.", max = 3)
@@ -42,6 +43,7 @@ public class Publication {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    @JsonBackReference
     private Admin creatorUser;
 
     private Integer viewCount = 0;

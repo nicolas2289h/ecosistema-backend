@@ -1,9 +1,7 @@
 package com.semillero.ecosistemas.model;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +17,9 @@ import java.util.List;
 @Setter
 public class Admin extends User{
 
-    @ElementCollection
-    List<Publication> publicationList;
+    @OneToMany(mappedBy = "creatorUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Publication> publicationList = new ArrayList<>();
 
     @PrePersist
     @Override

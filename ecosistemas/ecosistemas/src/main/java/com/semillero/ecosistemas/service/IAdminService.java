@@ -21,4 +21,7 @@ public interface IAdminService {
     //UPDATE
     public Admin updateAdmin(Long id, Admin admin);
     public void deactivateAdmin(Admin admin);
+
+    //EXTRACT TOKEN
+    public Long extractAdminIdFromToken(String token);
 }
