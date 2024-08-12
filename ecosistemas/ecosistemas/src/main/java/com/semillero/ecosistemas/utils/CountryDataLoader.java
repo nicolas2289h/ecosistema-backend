@@ -105,7 +105,7 @@ public class CountryDataLoader implements CommandLineRunner {
                 provinceRepository.saveAll(List.of(
                         new Province("Chuquisaca", bolivia),
                         new Province("Cochabamba", bolivia),
-                        new Province("El Beni", bolivia),
+                        new Province("Beni", bolivia),
                         new Province("La Paz", bolivia),
                         new Province("Oruro", bolivia),
                         new Province("Pando", bolivia),
