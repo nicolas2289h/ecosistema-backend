@@ -12,13 +12,11 @@ public interface IPublicationService {
 
     Publication updatePublication(Long idPublication, PublicationDTO publicationDTO, List<MultipartFile> files) throws IOException;
 
-    Publication getPublicationById(Long id);
+    Publication getPublicationById(Long id, String token) throws Exception;
 
     List<Publication> getAllPublications();
 
     List<Publication> getAllActivePublications();
-
-    Publication incrementViewPublication(Long id);
 
     Publication markAsDeleted(Long id);
 

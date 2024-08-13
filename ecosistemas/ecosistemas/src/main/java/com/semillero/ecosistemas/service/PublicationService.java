@@ -3,10 +3,13 @@ package com.semillero.ecosistemas.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.semillero.ecosistemas.dto.PublicationDTO;
+import com.semillero.ecosistemas.jwt.JwtService;
 import com.semillero.ecosistemas.model.Admin;
 import com.semillero.ecosistemas.model.Publication;
 import com.semillero.ecosistemas.repository.IAdminRepository;
 import com.semillero.ecosistemas.repository.IPublicationRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,19 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 public class PublicationService implements IPublicationService {
-    private final IPublicationRepository publicationRepository;
-    private final AdminService adminService;
-    private final IAdminRepository adminRepository;
-    private final Cloudinary cloudinary;
-
-    public PublicationService(IPublicationRepository publicationRepository, AdminService adminService, IAdminRepository adminRepository, Cloudinary cloudinary) {
-        this.publicationRepository = publicationRepository;
-        this.adminService = adminService;
-        this.adminRepository = adminRepository;
-        this.cloudinary = cloudinary;
-    }
+    @Autowired
+    private IPublicationRepository publicationRepository;
+    @Autowired
+    private AdminService adminService;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private IAdminRepository adminRepository;
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
     public Publication savePublication(PublicationDTO publicationDTO, List<MultipartFile> files, String token) throws IOException {
@@ -87,11 +90,32 @@ public class PublicationService implements IPublicationService {
         return publicationRepository.save(foundPublication);
     }
 
-    // PARA ROL ADMIN, SIN INCREMENTAR LAS VIEWS
+    // INCREMENTA 1 VIEW SI ES USER O SUPPLIER, NO INCREMENTA SI ES ADMIN
     @Override
-    public Publication getPublicationById(Long id) {
-        return publicationRepository.findById(id)
+    public Publication getPublicationById(Long id, String token) throws Exception {
+        String role = null;
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        if (token != null && !token.trim().isEmpty()) {
+            try {
+                role = jwtService.extractRole(token);
+            } catch (Exception e) {
+                throw new Exception("Error al extraer el rol del token.");
+            }
+        }
+
+        Publication foundPublication = publicationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró la publicación con id: " + id));
+
+        if (role == null || !role.equals("ADMIN")) {
+            foundPublication.incrementViewCount();
+            publicationRepository.save(foundPublication);
+        }
+
+        return foundPublication;
     }
 
     @Override
@@ -102,16 +126,6 @@ public class PublicationService implements IPublicationService {
     @Override
     public List<Publication> getAllActivePublications() {
         return publicationRepository.findByDeletedFalse();
-    }
-
-    @Override
-    public Publication incrementViewPublication(Long id) {
-        Publication foundPublication = publicationRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("No se encontró la publicación con id: " + id));
-
-        foundPublication.incrementViewCount();
-        publicationRepository.save(foundPublication);
-        return foundPublication;
     }
 
     @Override
