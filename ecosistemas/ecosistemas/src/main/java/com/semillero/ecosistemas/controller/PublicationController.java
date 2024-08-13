@@ -70,7 +70,7 @@ public class PublicationController {
 //    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Obtener todas las publicaciones", description = "Devuelve el listado de todas las publicaciones (Activas y No Activas)")
     @ApiResponse(responseCode = "200", description = "Listado de publicaciones obtenido exitosamente.")
-    @GetMapping("/getall")
+    @GetMapping
     public ResponseEntity<List<Publication>> getAllPublications() {
         try {
             List<Publication> listPublications = publicationService.getAllPublications();
@@ -80,17 +80,16 @@ public class PublicationController {
         }
     }
 
-    // OBTENER UNA PUBLICACION POR ID (ADMIN) SIN INCREMENTAR LAS VIEWS
-//    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Obtener una publicación por ID (sin incrementar las views)")
+    // OBTENER UNA PUBLICACION (INCREMENTA EN 1 LAS VIEWS SI ES USER O SUPPLIER Y NO INCREMENTA SI ES ADMIN)
+    @Operation(summary = "Obtener una publicacion por ID", description = "Incrementa las views en 1 si es USER o SUPPLIER. No incrementa las views si es ADMIN.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Publicación obtenida exitosamente."),
             @ApiResponse(responseCode = "404", description = "Publicación no encontrada.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Publication> getPublicationById(@PathVariable @Valid Long id) {
+    public ResponseEntity<Publication> getPublication(@PathVariable @Valid Long id, @RequestHeader(value = "Authorization", required = false) String token) throws Exception {
         try {
-            return new ResponseEntity<>(publicationService.getPublicationById(id), HttpStatus.OK);
+            return new ResponseEntity<>(publicationService.getPublicationById(id, token), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -109,21 +108,6 @@ public class PublicationController {
         }
     }
 
-    // INCREMENTAR EN UNO LAS VISUALIZACIONES DE UNA PUBLICACION - REVISAR LOGICA CON NUEVA IMPLEMENTACION
-    @Operation(summary = "Incrementar en 1 las views de una publicación", description = "Recibe el ID de una publicación e incrementa en 1 la cantidad de vistas de la misma")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Número de Views incrementado en 1."),
-            @ApiResponse(responseCode = "404", description = "Publicación no encontrada.")
-    })
-    @GetMapping("/view/{id}")
-    public ResponseEntity<Publication> incrementViewPublication(@PathVariable Long id) {
-        try {
-            return new ResponseEntity<>(publicationService.incrementViewPublication(id), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     // CAMBIAR EL ESTADO DE UNA PUBLICACACION A 'DELETED' (OCULTO)
 //    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar una publicación mediante su ID", description = "Cambia el estado de una publicacion a oculta (borrado virtual)")
@@ -131,7 +115,7 @@ public class PublicationController {
             @ApiResponse(responseCode = "200", description = "Publicación eliminada exitosamente."),
             @ApiResponse(responseCode = "404", description = "Publicación no encontrada.")
     })
-    @PatchMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Publication> markAsDeleted(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(publicationService.markAsDeleted(id), HttpStatus.OK);
