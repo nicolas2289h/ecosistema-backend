@@ -55,9 +55,10 @@ public class PublicationController {
             @ApiResponse(responseCode = "400", description = "Solicitud incorrecta, error en el archivo o datos proporcionados.")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Publication> updatePublication(@Valid @PathVariable Long id, @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files) {
+    public ResponseEntity<Publication> updatePublication(@Valid @PathVariable Long id, @ModelAttribute PublicationDTO publicationDTO, @RequestParam(required = false) List<MultipartFile> files, @RequestHeader("Authorization") String token) {
         try {
-            Publication updatedPublication = publicationService.updatePublication(id, publicationDTO, files);
+            String finalToken = token.replace("Bearer ", "");
+            Publication updatedPublication = publicationService.updatePublication(id, publicationDTO, files, finalToken);
             return new ResponseEntity<>(updatedPublication, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -77,6 +78,21 @@ public class PublicationController {
             return new ResponseEntity<>(listPublications, HttpStatus.OK);
         } catch (ErrorResponseException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // OBTENER UNA PUBLICACION (SIN MODIFICAR VIEWS)
+    @Operation(summary = "Obtener una publicacion por ID", description = "Devuelve una publicación guardada (Sin modificar las views).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Publicación obtenida exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Publicación no encontrada.")
+    })
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Publication> getOnePublicationById(@PathVariable @Valid Long id) {
+        try {
+            return new ResponseEntity<>(publicationService.getOnePublicationById(id), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
