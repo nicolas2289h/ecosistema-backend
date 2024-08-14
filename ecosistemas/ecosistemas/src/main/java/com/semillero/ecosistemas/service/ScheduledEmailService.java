@@ -22,7 +22,7 @@ public class ScheduledEmailService {
     private ISupplierService supplierService;
 
 
-    @Scheduled(cron = "0 15 14 * * FRI")
+    @Scheduled(cron = "0 45 15 * * FRI")
     public void sendWeeklyEmails() {
         sendEmailsToAppUsers();
     }

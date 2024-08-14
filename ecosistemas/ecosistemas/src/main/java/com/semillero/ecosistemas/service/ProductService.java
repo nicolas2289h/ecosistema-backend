@@ -63,7 +63,7 @@ public class ProductService implements IProductService {
         productDTO.setFacebook(facebook != null ? facebook : "");
         productDTO.setCountry(country);
         productDTO.setProvince(province);
-        productDTO.setCity(city != null ? city : "");
+        productDTO.setCity(city);
         productDTO.setLongDescription(longDescription != null ? longDescription : "");
 
         return productDTO;
@@ -121,6 +121,87 @@ public class ProductService implements IProductService {
             //Retornamos el Producto para la Response
             return product;
         }
+    }
+
+    @Override
+    public Product updateProduct(Long id, ProductDTO productDTO, List<String> URLsToDelete, List<MultipartFile> files) throws IOException {
+        // Traer el producto original
+        Product previousProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Listas Auxiliares
+        List<String> newImages = new ArrayList<>(previousProduct.getImagesURLs()); // Lista de imágenes del producto
+
+        /* CODIGO ORIGINAL
+        // Camino --> Se han borrado imágenes cargadas previamente
+        if (!URLsToDelete.isEmpty()) {
+            // Resguardo de imagenes a mantener
+            newImages.removeAll(URLsToDelete);
+
+            // Eliminación de Imágenes obsoletas del Producto
+            for (String urlToDelete : URLsToDelete) {
+                this.deleteImageProduct(urlToDelete);
+            }
+        }
+
+        // Subimos los nuevos archivos de imagen a CLOUDINARY y agregamos la URL a la lista
+        if (!files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String imageURL = uploadImage(file);
+                    newImages.add(imageURL);
+                }
+            }
+        }
+
+         */
+
+        // Modificacion del front
+        if (URLsToDelete != null &&  !URLsToDelete.isEmpty()) {
+            // Resguardo de imagenes a mantener
+            newImages.removeAll(URLsToDelete);
+
+            // Eliminación de Imágenes obsoletas del Producto
+            for (String urlToDelete : URLsToDelete) {
+                this.deleteImageProduct(urlToDelete);
+            }
+        }
+
+        // Subimos los nuevos archivos de imagen a CLOUDINARY y agregamos la URL a la lista
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    String imageURL = uploadImage(file);
+                    newImages.add(imageURL);
+                }
+            }
+        }
+
+        // Verificar que la cantidad total de imágenes no exceda el máximo permitido
+        if (newImages.isEmpty() || newImages.size() > 3) {
+            throw new IllegalArgumentException("El producto debe contener al menos una imagen y no puede tener más de tres.");
+        }
+
+        // Seteamos los nuevos valores al Producto existente
+        previousProduct.setName(productDTO.getName());
+        previousProduct.setShortDescription(productDTO.getShortDescription());
+        previousProduct.setCategory(productDTO.getCategory());
+        previousProduct.setEmail(productDTO.getEmail());
+        previousProduct.setPhoneNumber(productDTO.getPhoneNumber());
+        previousProduct.setInstagram(productDTO.getInstagram() != null ? productDTO.getInstagram() : "");
+        previousProduct.setFacebook(productDTO.getFacebook() != null ? productDTO.getFacebook() : "");
+        previousProduct.setCountry(productDTO.getCountry());
+        previousProduct.setProvince(productDTO.getProvince());
+        previousProduct.setCity(productDTO.getCity());
+        previousProduct.setLongDescription(productDTO.getLongDescription() != null ? productDTO.getLongDescription() : "");
+        previousProduct.setImagesURLs(newImages);
+
+        if (previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS")||previousProduct.getStatus().toString().equals("ACEPTADO")) {
+            previousProduct.setStatus(Status.CAMBIOS_REALIZADOS);
+            previousProduct.setStatusDate(LocalDateTime.now());
+        }
+
+        // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
+        return productRepository.save(previousProduct);
     }
 
     // Find
@@ -187,78 +268,6 @@ public class ProductService implements IProductService {
         } else {
             throw new IllegalArgumentException("Producto no encontrado con el ID: " + id);
         }
-    }
-
-
-    @Override
-    public Product updateProduct(Long id, ProductDTO productDTO, List<String> URLsToDelete, List<MultipartFile> files) throws IOException {
-        // Traer el producto original
-        Product previousProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-
-        // Lista de imágenes del producto
-        List<String> previousImages = new ArrayList<>(previousProduct.getImagesURLs());
-
-        // Camino --> Se han borrado imágenes cargadas previamente
-        if (URLsToDelete != null) {
-            List<String> URLsToKeep = new ArrayList<>();
-
-            // Resguardo de imagenes a mantener
-            for (String previousImage : previousImages) {
-                if (!URLsToDelete.contains(previousImage)) {
-                    URLsToKeep.add(previousImage);
-                }
-            }
-
-            // Verificar que la cantidad de imágenes a mantener respeta el mínimo
-            if (URLsToKeep.isEmpty()) {
-                throw new IllegalArgumentException("El producto debe tener al menos una imagen.");
-            }
-
-            // Eliminación de Imágenes obsoletas del Producto
-            for (String urlToDelete : URLsToDelete) {
-                this.deleteImageProduct(urlToDelete);
-            }
-
-            // Actualizar la lista de imágenes con las URLs a mantener
-            previousImages = URLsToKeep;
-        }
-
-        // Subimos los nuevos archivos de imagen a CLOUDINARY y agregamos la URL a la lista
-        if (files != null) {
-            for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    String imageURL = uploadImage(file);
-                    previousImages.add(imageURL);
-                }
-            }
-        }
-
-        // Verificar que la cantidad total de imágenes no exceda el máximo permitido
-        if (previousImages.size() > 3) {
-            throw new IllegalArgumentException("El producto no puede tener más de tres imágenes.");
-        }
-
-        // Seteamos los nuevos valores al Producto existente
-        previousProduct.setName(productDTO.getName());
-        previousProduct.setShortDescription(productDTO.getShortDescription());
-        previousProduct.setCategory(productDTO.getCategory());
-        previousProduct.setEmail(productDTO.getEmail());
-        previousProduct.setPhoneNumber(productDTO.getPhoneNumber());
-        previousProduct.setInstagram(productDTO.getInstagram() != null ? productDTO.getInstagram() : "");
-        previousProduct.setFacebook(productDTO.getFacebook() != null ? productDTO.getFacebook() : "");
-        previousProduct.setCountry(productDTO.getCountry());
-        previousProduct.setProvince(productDTO.getProvince());
-        previousProduct.setCity(productDTO.getCity() != null ? productDTO.getCity() : "");
-        previousProduct.setLongDescription(productDTO.getLongDescription() != null ? productDTO.getLongDescription() : "");
-        previousProduct.setImagesURLs(previousImages);
-
-        if (previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS")) {
-            previousProduct.setStatus(Status.CAMBIOS_REALIZADOS);
-            previousProduct.setStatusDate(LocalDateTime.now());
-        }
-
-        // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
-        return productRepository.save(previousProduct);
     }
 
 

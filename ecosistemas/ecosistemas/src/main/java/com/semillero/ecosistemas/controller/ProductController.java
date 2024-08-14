@@ -48,7 +48,7 @@ public class ProductController {
             @RequestParam(required = false, name = "facebook") String facebook,
             @RequestParam("countryId") Long countryId,
             @RequestParam("provinceId") Long provinceId,
-            @RequestParam(required = false, name = "city") String city,
+            @RequestParam("city") String city,
             @RequestParam(required = false, name = "longDescription") String longDescription,
             @RequestParam("files") List<MultipartFile> files,
             @RequestHeader("Authorization") String authorizationHeader) {
@@ -103,7 +103,7 @@ public class ProductController {
             @RequestParam(required = false, name = "facebook") String facebook,
             @RequestParam("countryId") Long countryId,
             @RequestParam("provinceId") Long provinceId,
-            @RequestParam(required = false, name = "city") String city,
+            @RequestParam("city") String city,
             @RequestParam(required = false, name = "longDescription") String longDescription,
             @RequestParam(required = false, name = "URLsToDelete") List<String> URLsToDelete,
             @RequestParam(required = false, name = "files") List<MultipartFile> files) {

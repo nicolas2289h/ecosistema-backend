@@ -23,7 +23,7 @@ import java.util.List;
         }
     
         @GetMapping("/country/{countryID}")
-        public List<Province> getProvincesByCountryId(@PathVariable Long countryId) {
-            return provinceService.getProvincesByCountryId(countryId);
+        public List<Province> getProvincesByCountryId(@PathVariable Long countryID) {
+            return provinceService.getProvincesByCountryId(countryID);
         }
     }
