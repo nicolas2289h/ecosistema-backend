@@ -63,7 +63,11 @@ public class PublicationService implements IPublicationService {
     }
 
     @Override
-    public Publication updatePublication(Long id, PublicationDTO publicationDTO, List<MultipartFile> files) throws IOException {
+    public Publication updatePublication(Long id, PublicationDTO publicationDTO, List<MultipartFile> files, String token) throws IOException {
+        Long adminId = adminService.extractAdminIdFromToken(token);
+        Admin foundAdmin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new NoSuchElementException("No se encontró el admin con id: " + adminId));
+
         Publication foundPublication = publicationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró la publicación con id: " + id));
 
@@ -88,6 +92,13 @@ public class PublicationService implements IPublicationService {
         }
 
         return publicationRepository.save(foundPublication);
+    }
+
+    // OBTIENE UNA PUBLICACION SIN MODIFICAR LAS VIEWS
+    @Override
+    public Publication getOnePublicationById(Long id) {
+        return publicationRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Publicacion no encontrada con ID: " + id));
     }
 
     // INCREMENTA 1 VIEW SI ES USER O SUPPLIER, NO INCREMENTA SI ES ADMIN

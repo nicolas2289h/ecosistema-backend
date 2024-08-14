@@ -10,7 +10,7 @@ import java.util.List;
 public interface IPublicationService {
     Publication savePublication(PublicationDTO publicationDTO, List<MultipartFile> files, String token) throws IOException;
 
-    Publication updatePublication(Long idPublication, PublicationDTO publicationDTO, List<MultipartFile> files) throws IOException;
+    Publication updatePublication(Long idPublication, PublicationDTO publicationDTO, List<MultipartFile> files, String token) throws IOException;
 
     Publication getPublicationById(Long id, String token) throws Exception;
 
@@ -21,4 +21,6 @@ public interface IPublicationService {
     Publication markAsDeleted(Long id);
 
     void deleteImagePublication(String url) throws IOException;
+
+    Publication getOnePublicationById(Long id);
 }
