@@ -13,4 +13,6 @@ public interface IProductRepository extends JpaRepository<Product, Long> {
 
     // Consulta para obtener productos con statusDate en los últimos 7 días
     List<Product> findByStatusDateAfter(LocalDateTime lastWeek);
+
+    List<Product> findByDeletedFalse();
 }
