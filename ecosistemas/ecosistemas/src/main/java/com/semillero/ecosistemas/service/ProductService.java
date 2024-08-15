@@ -80,7 +80,7 @@ public class ProductService implements IProductService {
         Supplier supplier = supplierService.findSupplierById(supplierId)
                 .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
 
-        //Chequeamos la cantidad de productos del Supplier
+        //Chequeamos que la cantidad de productos del Supplier no haya alcanzado el limite de 3
         if(supplier.getProductList().size()>=3){
             return null;
         }
@@ -91,8 +91,6 @@ public class ProductService implements IProductService {
                 String imageURL = uploadImage(file);
                 productImages.add(imageURL);
             }
-
-
 
             //Creamos el Producto y completamos sus variables con los campos del ProductDTO, el Array de URLs y el Supplier
             Product product = Product.builder()
@@ -128,41 +126,17 @@ public class ProductService implements IProductService {
         // Traer el producto original
         Product previousProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // Listas Auxiliares
-        List<String> newImages = new ArrayList<>(previousProduct.getImagesURLs()); // Lista de imágenes del producto
+        // Lista de imágenes del producto
+        List<String> newImages = new ArrayList<>(previousProduct.getImagesURLs());
 
-        /* CODIGO ORIGINAL
-        // Camino --> Se han borrado imágenes cargadas previamente
-        if (!URLsToDelete.isEmpty()) {
-            // Resguardo de imagenes a mantener
-            newImages.removeAll(URLsToDelete);
-
-            // Eliminación de Imágenes obsoletas del Producto
+        if (URLsToDelete != null && !URLsToDelete.isEmpty()) {
+            // Iteramos sobre las URLs a eliminar
             for (String urlToDelete : URLsToDelete) {
-                this.deleteImageProduct(urlToDelete);
-            }
-        }
+                // Eliminación de imágenes que contienen la URL a eliminar
+                newImages.removeIf(imageUrl -> imageUrl.contains(urlToDelete.trim()));
 
-        // Subimos los nuevos archivos de imagen a CLOUDINARY y agregamos la URL a la lista
-        if (!files.isEmpty()) {
-            for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    String imageURL = uploadImage(file);
-                    newImages.add(imageURL);
-                }
-            }
-        }
-
-         */
-
-        // Modificacion del front
-        if (URLsToDelete != null &&  !URLsToDelete.isEmpty()) {
-            // Resguardo de imagenes a mantener
-            newImages.removeAll(URLsToDelete);
-
-            // Eliminación de Imágenes obsoletas del Producto
-            for (String urlToDelete : URLsToDelete) {
-                this.deleteImageProduct(urlToDelete);
+                // Eliminación de Imágenes obsoletas del Producto (en Cloudinary)
+                this.deleteImageProduct(urlToDelete.trim());
             }
         }
 
@@ -195,7 +169,7 @@ public class ProductService implements IProductService {
         previousProduct.setLongDescription(productDTO.getLongDescription() != null ? productDTO.getLongDescription() : "");
         previousProduct.setImagesURLs(newImages);
 
-        if (previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS")||previousProduct.getStatus().toString().equals("ACEPTADO")) {
+        if (previousProduct.getStatus().toString().equals("REQUIERE_CAMBIOS") || previousProduct.getStatus().toString().equals("ACEPTADO")) {
             previousProduct.setStatus(Status.CAMBIOS_REALIZADOS);
             previousProduct.setStatusDate(LocalDateTime.now());
         }
@@ -203,6 +177,7 @@ public class ProductService implements IProductService {
         // Guardamos el Producto modificado en la Base de Datos y lo retornamos para la response
         return productRepository.save(previousProduct);
     }
+
 
     // Find
     @Override

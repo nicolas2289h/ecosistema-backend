@@ -51,13 +51,13 @@ public class Product {
     @JoinColumn(name = "province_id", referencedColumnName = "id")
     private Province province;
 
+    @NotBlank(message = "El campo ciudad es obligatorio.")
     private String city;
 
     @Length(max = 300, message = "La cantidad máxima de caracteres es 300.")
     private String longDescription;
 
     @ElementCollection
-    @NotEmpty(message = "Debe contener al menos 1 imagen con un maximo de 3.")
     @Size(max = 3)
     private List<String> imagesURLs;
 

@@ -1,5 +1,6 @@
 package com.semillero.ecosistemas.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.semillero.ecosistemas.dto.ProductDTO;
 import com.semillero.ecosistemas.model.Product;
 import com.semillero.ecosistemas.model.Supplier;
@@ -105,10 +106,17 @@ public class ProductController {
             @RequestParam("provinceId") Long provinceId,
             @RequestParam("city") String city,
             @RequestParam(required = false, name = "longDescription") String longDescription,
-            @RequestParam(required = false, name = "URLsToDelete") List<String> URLsToDelete,
+            @RequestParam(required = false, name = "URLsToDelete") String URLsToDeleteJson, // Recibimos el JSON como String
             @RequestParam(required = false, name = "files") List<MultipartFile> files) {
 
         try {
+            List<String> URLsToDelete = new ArrayList<>();
+
+            if(URLsToDeleteJson!=null){
+                // Deserializar el JSON de URLsToDelete en una lista de Strings
+                URLsToDelete = new ObjectMapper().readValue(URLsToDeleteJson, List.class);
+            }
+
             // Construir el ProductDTO
             ProductDTO productDTO = productService.buildProductDTO(
                     name,
@@ -124,6 +132,7 @@ public class ProductController {
                     longDescription
             );
 
+            // Pasar la lista deserializada al servicio
             return ResponseEntity.ok(productService.updateProduct(productID, productDTO, URLsToDelete, files));
 
         } catch (IOException e) {
@@ -132,6 +141,7 @@ public class ProductController {
             return ResponseEntity.status(400).body(null);
         }
     }
+
 
     //GET SUPPLIER'S PRODUCTS (SUPPLIER)
 //    @PreAuthorize("hasRole('SUPPLIER')")
