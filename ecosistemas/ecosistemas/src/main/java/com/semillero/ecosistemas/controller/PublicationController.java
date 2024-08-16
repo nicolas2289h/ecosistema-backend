@@ -124,7 +124,7 @@ public class PublicationController {
         }
     }
 
-    // CAMBIAR EL ESTADO DE UNA PUBLICACACION A 'DELETED' (OCULTO)
+    // CAMBIAR EL ESTADO DE UNA PUBLICACACION A 'DELETED' (OCULTO) O 'ACTIVA'
 //    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar una publicación mediante su ID", description = "Cambia el estado de una publicacion a oculta (borrado virtual)")
     @ApiResponses(value = {

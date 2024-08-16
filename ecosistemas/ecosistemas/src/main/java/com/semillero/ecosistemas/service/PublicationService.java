@@ -143,8 +143,11 @@ public class PublicationService implements IPublicationService {
     public Publication markAsDeleted(Long id) {
         Publication foundPublication = publicationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró la publicación con id: " + id));
-
-        foundPublication.setDeleted(true);
+        if(foundPublication.isDeleted()){
+            foundPublication.setDeleted(false);
+        }else{
+            foundPublication.setDeleted(true);
+        }
         publicationRepository.save(foundPublication);
         return foundPublication;
     }
