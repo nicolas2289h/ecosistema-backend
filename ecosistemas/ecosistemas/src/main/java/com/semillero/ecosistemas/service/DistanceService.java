@@ -1,7 +1,6 @@
 package com.semillero.ecosistemas.service;
 
 import com.semillero.ecosistemas.dto.DistanceResult;
-import com.semillero.ecosistemas.dto.ProductGeoDto;
 import com.semillero.ecosistemas.model.Coordinates;
 import com.semillero.ecosistemas.model.Country;
 import com.semillero.ecosistemas.model.Product;
@@ -29,10 +28,12 @@ public class DistanceService {
         this.geocodingService = geocodingService;
     }
 
-    public List<DistanceResult> calculateTop5ShortestDistances(double lat, double lon) {
+    public List<Product> calculateTop5ShortestDistances(double lat, double lon) {
         List<Product> products = productRepository.findAll();
 
         List<DistanceResult> distanceResults = new ArrayList<>();
+
+        List<Product> nearProducts = new ArrayList<>();
 
         for (Product product : products) {
             Province province = product.getProvince();
@@ -55,13 +56,13 @@ public class DistanceService {
             double targetLon = Double.parseDouble(coordinates.getLongitude());
             double distance = distanceCalculator.calculate(lat, lon, targetLat, targetLon);
 
-            ProductGeoDto productGeoDto = new ProductGeoDto(product);
-
-            distanceResults.add(new DistanceResult(productGeoDto, distance));
+            distanceResults.add(new DistanceResult(product, distance));
         }
 
         Collections.sort(distanceResults, (dr1, dr2) -> Double.compare(dr1.getDistance(), dr2.getDistance()));
-
-        return distanceResults.size() > 5 ? distanceResults.subList(0, 5) : distanceResults;
+        for (DistanceResult distanceResult: distanceResults){
+            nearProducts.add(distanceResult.getProduct());
+        }
+        return nearProducts;
     }
 }
