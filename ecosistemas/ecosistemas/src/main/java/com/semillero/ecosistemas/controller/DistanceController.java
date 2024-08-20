@@ -1,6 +1,8 @@
 package com.semillero.ecosistemas.controller;
 
 import com.semillero.ecosistemas.dto.DistanceResult;
+import com.semillero.ecosistemas.dto.ProductDTO;
+import com.semillero.ecosistemas.model.Product;
 import com.semillero.ecosistemas.service.DistanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,7 @@ public class DistanceController {
     }
 
     @GetMapping("/calculate")
-    public List<DistanceResult> calculateTop5ShortestDistances(@RequestParam double lat, @RequestParam double lon) {
+    public List<Product> calculateTop5ShortestDistances(@RequestParam double lat, @RequestParam double lon) {
         return distanceService.calculateTop5ShortestDistances(lat, lon);
     }
 }

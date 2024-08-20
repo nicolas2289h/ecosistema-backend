@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DistanceResult {
-    private ProductGeoDto productGeoDto;
+    private Product product;
     private double distance;
 
-    public DistanceResult(ProductGeoDto productGeoDto, double distance) {
-        this.productGeoDto = productGeoDto;
+    public DistanceResult(Product product, double distance) {
+        this.product = product;
         this.distance = distance;
     }
 }
