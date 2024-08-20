@@ -1,8 +1,6 @@
 package com.semillero.ecosistemas.service;
 
 import com.semillero.ecosistemas.dto.DistanceResult;
-import com.semillero.ecosistemas.dto.ProductDTO;
-import com.semillero.ecosistemas.dto.ProductGeoDto;
 import com.semillero.ecosistemas.model.Coordinates;
 import com.semillero.ecosistemas.model.Country;
 import com.semillero.ecosistemas.model.Product;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

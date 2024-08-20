@@ -1,7 +1,5 @@
 package com.semillero.ecosistemas.controller;
 
-import com.semillero.ecosistemas.dto.DistanceResult;
-import com.semillero.ecosistemas.dto.ProductDTO;
 import com.semillero.ecosistemas.model.Product;
 import com.semillero.ecosistemas.service.DistanceService;
 import org.springframework.beans.factory.annotation.Autowired;
