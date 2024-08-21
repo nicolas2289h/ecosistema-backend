@@ -10,14 +10,15 @@ import com.semillero.ecosistemas.repository.IAdminRepository;
 import com.semillero.ecosistemas.repository.IPublicationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -101,6 +102,13 @@ public class PublicationService implements IPublicationService {
                 .orElseThrow(() -> new NoSuchElementException("Publicacion no encontrada con ID: " + id));
     }
 
+    // OBTENER LAS 3 ULTIMAS PUBLICACIONES ACTIVAS ORDENADAS DESDE LA MAS RECIENTE HASTA LA MAS ANTIGUA
+    @Override
+    public List<Publication> getLastThreePublications() {
+        Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        return publicationRepository.findTop3ByDeletedFalse(pageable);
+    }
+
     // INCREMENTA 1 VIEW SI ES USER O SUPPLIER, NO INCREMENTA SI ES ADMIN
     @Override
     public Publication getPublicationById(Long id, String token) throws Exception {
@@ -125,8 +133,8 @@ public class PublicationService implements IPublicationService {
             foundPublication.incrementViewCount();
             publicationRepository.save(foundPublication);
         }
-
-        return foundPublication;
+//        return foundPublication;
+        return null;
     }
 
     @Override

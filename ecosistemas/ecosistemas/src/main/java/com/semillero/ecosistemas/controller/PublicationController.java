@@ -6,6 +6,7 @@ import com.semillero.ecosistemas.service.PublicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class PublicationController {
     }
 
     // CREAR UNA NUEVA PUBLICACION
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nueva publicacion", description = "Realiza la creacion de una publicacion previamente validada")
     @ApiResponse(responseCode = "201", description = "Publicación creada exitosamente")
     @PostMapping
@@ -47,7 +48,7 @@ public class PublicationController {
     }
 
     // ACTUALIZAR UNA PUBLICACION POR ID
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar una publicación", description = "Actualiza una publicación recibiendo el ID de la publicación a modificar, la publicación nueva, y el listado de URLs de las imágenes a eliminar.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Publicación actualizada exitosamente."),
@@ -97,7 +98,7 @@ public class PublicationController {
     }
 
     // OBTENER UNA PUBLICACION (INCREMENTA EN 1 LAS VIEWS SI ES USER O SUPPLIER Y NO INCREMENTA SI ES ADMIN)
-    @Operation(summary = "Obtener una publicacion por ID", description = "Incrementa las views en 1 si es USER o SUPPLIER. No incrementa las views si es ADMIN.")
+    @Operation(summary = "Incrementar las views por ID", description = "Incrementa las views en 1 si es USER o SUPPLIER. No incrementa las views si es ADMIN.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Publicación obtenida exitosamente."),
             @ApiResponse(responseCode = "404", description = "Publicación no encontrada.")
@@ -140,5 +141,17 @@ public class PublicationController {
         }
     }
 
+    // OBTENER LAS 3 ULTIMAS PUBLICACIONES ACTIVAS ORDENADAS DESDE LA MAS RECIENTE HASTA LA MAS ANTIGUA
+    @Operation(summary = "Obtener las últimas 3 publicaciones", description = "Devuelve las últimas 3 publicaciones activas ordenadas por fecha de mayor a menor")
+    @ApiResponse(responseCode = "200", description = "Listado de publicaciones obtenido exitosamente.")
+    @GetMapping("/last-three")
+    public ResponseEntity<List<Publication>> getLastThreePublications() {
+        try {
+            List<Publication> publicationList = publicationService.getLastThreePublications();
+            return new ResponseEntity<>(publicationList, HttpStatus.OK);
+        } catch (ErrorResponseException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 

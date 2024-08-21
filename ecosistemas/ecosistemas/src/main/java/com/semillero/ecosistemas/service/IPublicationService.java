@@ -23,4 +23,6 @@ public interface IPublicationService {
     void deleteImagePublication(String url) throws IOException;
 
     Publication getOnePublicationById(Long id);
+
+    List<Publication> getLastThreePublications();
 }
