@@ -93,7 +93,7 @@ public class DashboardService implements IDashboardService {
         return dashboardDTOList;
     }
 
-    // Proveedores por categoria MODIFICAR A PRODUCTOS POR CATEGORIA ***********************************
+    // Proveedores por categoria
     @Override
     public Map<String, Long> getSupplierCountByCategory() {
         List<Supplier> suppliers = supplierRepository.findAll();
