@@ -33,10 +33,11 @@ public class PublicationController {
     }
 
     // CREAR UNA NUEVA PUBLICACION
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nueva publicacion", description = "Realiza la creacion de una publicacion previamente validada")
     @ApiResponse(responseCode = "201", description = "Publicación creada exitosamente")
     @PostMapping
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<Publication> createPublication(@Valid @ModelAttribute PublicationDTO publicationDTO, @RequestParam List<MultipartFile> files, @RequestHeader("Authorization") String token) {
         try {
             String finalToken = token.replace("Bearer ", "");
@@ -48,13 +49,14 @@ public class PublicationController {
     }
 
     // ACTUALIZAR UNA PUBLICACION POR ID
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar una publicación", description = "Actualiza una publicación recibiendo el ID de la publicación a modificar, la publicación nueva, y el listado de URLs de las imágenes a eliminar.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Publicación actualizada exitosamente."),
             @ApiResponse(responseCode = "404", description = "Publicación no encontrada."),
             @ApiResponse(responseCode = "400", description = "Solicitud incorrecta, error en el archivo o datos proporcionados.")
     })
+    @SecurityRequirement(name = "Authorization")
     @PutMapping("/{id}")
     public ResponseEntity<Publication> updatePublication(@Valid @PathVariable Long id, @ModelAttribute PublicationDTO publicationDTO, @RequestParam(required = false) List<MultipartFile> files, @RequestHeader("Authorization") String token) {
         try {
