@@ -104,7 +104,7 @@ public class ProductController {
     }
 
     //UPDATE PRODUCT (SUPPLIER) / ACTUALIZAR PRODUCTO (USUARIO PROVEEDOR)
-    @PreAuthorize("hasRole('SUPPLIER')")
+//    @PreAuthorize("hasRole('SUPPLIER')")
     @Operation(summary = "Actualizar un Producto", description = "Actualiza un Producto recibiendo el ID del Producto a modificar, los campos establecidos a modificar, el listado de URLs de las imágenes a eliminar (Opcional) y los archivos de imagenes a cargar (Opcional).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente."),
