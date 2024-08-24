@@ -27,7 +27,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                                 authorizeRequests
                                         .requestMatchers("/api/auth/login").authenticated()
-//                                .requestMatchers("/api/users/**", "/api/admins/**", "/api/suppliers/**").hasRole("ADMIN")
                                         .anyRequest().permitAll()
                 )
                 .oauth2Login(withDefaults())
