@@ -12,7 +12,7 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Ecosistema Spring Boot")
+                        .title("Ecosistema SpringBoot - CoderFriend's")
                         .description("Aplicación de API Rest - Ecosistema")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")));
