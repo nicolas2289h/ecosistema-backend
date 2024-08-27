@@ -22,7 +22,7 @@ public class QuestionController {
     private QuestionService questionService;
 
     //Listado de preguntas
-    @Operation(summary = "Obtener todas las Preguntas", description = "Devuelve el listado de todas las Preguntas.")
+    @Operation(summary = "Obtener lista de todas las Preguntas", description = "Devuelve el listado de todas las Preguntas.")
     @ApiResponse(responseCode = "200", description = "Listado de Preguntas obtenido exitosamente.")
     @GetMapping
     public List<Question> getAllQuestions() {
@@ -54,7 +54,7 @@ public class QuestionController {
     }
 
     //Crea nueva Pregunta
-    @Operation(summary = "Crear nueva Pregunta", description = "Realiza la creación de una Pregunta.")
+    @Operation(summary = "Crear nueva Pregunta", description = "Crea una nueva Pregunta.")
     @ApiResponse(responseCode = "201", description = "Pregunta creada exitosamente")
     @PostMapping
     public Question createQuestion(@RequestBody Question question) {

@@ -30,7 +30,7 @@ public class DistanceController {
     }
 
     //Muestra los proveedores cercanos
-    @Operation(summary = "Muestra los proveedores cercanos", description = "Devuelve los proveedores más cercanos según la ubicación actual del usuario")
+    @Operation(summary = "Muestra los proveedores más cercanos de la zona", description = "Devuelve los proveedores más cercanos según la ubicación actual del usuario")
     @ApiResponse(responseCode = "201", description = "Info cargada exitosamente")
     @GetMapping("/calculate")
     public List<Product> calculateTop5ShortestDistances(@RequestParam double lat, @RequestParam double lon) {

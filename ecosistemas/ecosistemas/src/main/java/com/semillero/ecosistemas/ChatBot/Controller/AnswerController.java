@@ -22,7 +22,7 @@ public class AnswerController {
     private AnswerService answerService;
 
     //Listado de Respuestas
-    @Operation(summary = "Obtener todas las Respuestas", description = "Devuelve el listado de todas las Respuestas.")
+    @Operation(summary = "Obtener lista de todas las Respuestas", description = "Devuelve el listado de todas las Respuestas.")
     @ApiResponse(responseCode = "200", description = "Listado de Respuestas obtenido exitosamente.")
     @GetMapping
     public List<Answer> getAllAnswers() {
@@ -54,7 +54,7 @@ public class AnswerController {
     }
 
     //Crea nueva Respuesta
-    @Operation(summary = "Crear nueva Respuesta", description = "Realiza la creación de una Respuesta.")
+    @Operation(summary = "Crear nueva Respuesta", description = "Crea una nueva Respuesta.")
     @ApiResponse(responseCode = "201", description = "Respuesta creada exitosamente")
     @PostMapping
     public Answer createAnswer(@RequestBody Answer answer) {
