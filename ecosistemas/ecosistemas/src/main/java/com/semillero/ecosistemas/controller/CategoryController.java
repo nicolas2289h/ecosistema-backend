@@ -25,9 +25,9 @@ public class CategoryController {
     ICategoryService categoryService;
 
     //Crear nueva Categoría
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')") //Requiere Token
     @SecurityRequirement(name = "Authorization")
-    @Operation(summary = "Crear nueva Categoría", description = "Realiza la creación de una Categoría.")
+    @Operation(summary = "Crear nueva Categoría", description = "Crea una nueva Categoría.")
     @ApiResponse(responseCode = "201", description = "Categoría creada exitosamente")
     @PostMapping
     public ResponseEntity<Category> saveCategory(@RequestBody Category category){

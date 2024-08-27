@@ -24,7 +24,7 @@ public class ProvinceController {
     @Autowired
     private IProvinceService provinceService;
 
-
+    //Muestra una provincia por ID
     @Operation(summary = "Obtener una Provincia por ID", description = "Devuelve una Provincia guardada.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Provincia obtenida exitosamente."),
@@ -36,6 +36,7 @@ public class ProvinceController {
         return provinceService.getProvinceById(provinceID);
     }
 
+    //Lista de Provincias por ID de Pais
     @Operation(summary = "Obtener Listado de Provincias por ID de País", description = "Devuelve un listado de Provincias por ID de País.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente."),

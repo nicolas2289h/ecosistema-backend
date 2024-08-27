@@ -22,7 +22,7 @@ public class CategoryCController {
     private CategoryCService categoryCService;
 
     //Listado de Categoría
-    @Operation(summary = "Obtener todas las categorías", description = "Devuelve el listado de todas las Categorías.")
+    @Operation(summary = "Obtener lista de todas las categorías", description = "Devuelve el listado de todas las Categorías.")
     @ApiResponse(responseCode = "200", description = "Listado de Categorías obtenido exitosamente.")
     @GetMapping
     public List<CategoryC> getAllCategories() {
@@ -42,7 +42,7 @@ public class CategoryCController {
     }
 
     //Crear Categoría
-    @Operation(summary = "Crear nueva Categoría", description = "Realiza la creación de una Categoría.")
+    @Operation(summary = "Crear nueva Categoría", description = "Crea una nueva Categoría.")
     @ApiResponse(responseCode = "201", description = "Categoría creada exitosamente")
     @PostMapping
     public CategoryC createCategory(@RequestBody CategoryC category) {
