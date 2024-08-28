@@ -186,7 +186,7 @@ public class ProductController {
     }
 
     //FIND PRODUCT BY ID (ADMIN) / OBTENER PRODUCTO POR ID (USUARIO ADMINISTRADOR)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPLIER')")
     @Operation(summary = "Obtener Producto por ID", description = "Devuelve un Producto por ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Producto encontrado exitosamente."),

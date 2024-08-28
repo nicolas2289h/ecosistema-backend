@@ -33,7 +33,7 @@ public class PublicationController {
     }
 
     // CREAR UNA NUEVA PUBLICACION
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nueva publicacion", description = "Realiza la creacion de una publicacion previamente validada")
     @ApiResponse(responseCode = "201", description = "Publicación creada exitosamente")
     @PostMapping
@@ -49,7 +49,7 @@ public class PublicationController {
     }
 
     // ACTUALIZAR UNA PUBLICACION POR ID
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar una publicación", description = "Actualiza una publicación recibiendo el ID de la publicación a modificar, la publicación nueva, y el listado de URLs de las imágenes a eliminar.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Publicación actualizada exitosamente."),
@@ -71,7 +71,7 @@ public class PublicationController {
     }
 
     // OBTENER LAS PUBLICACIONES ACTIVAS Y NO ACTIVAS
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Obtener todas las publicaciones", description = "Devuelve el listado de todas las publicaciones (Activas y No Activas)")
     @ApiResponse(responseCode = "200", description = "Listado de publicaciones obtenido exitosamente.")
     @GetMapping
@@ -128,7 +128,7 @@ public class PublicationController {
     }
 
     // CAMBIAR EL ESTADO DE UNA PUBLICACACION A 'DELETED' (OCULTO) O 'ACTIVA'
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar una publicación mediante su ID", description = "Cambia el estado de una publicacion a oculta (borrado virtual)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Publicación eliminada exitosamente."),
